@@ -1,3 +1,3 @@
 This is a research project.
 
-The code also run at a linux server.
+The project is more about multiagent reinforcement learning and evolutionary game theory.
