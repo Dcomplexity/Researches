@@ -1,0 +1,15 @@
+# Ignore everything
+*
+
+# But not these files
+!*.gitignore
+!*.cpp
+!*.h
+!*.md
+!CMakeLists.txt
+!run.sh
+
+# even if they are in subdirectories
+!*/
+
+**/CMakeFiles
