@@ -1,3 +1,1 @@
-Please leave the note.
-
-There is a mistake.
+This is a research project.
