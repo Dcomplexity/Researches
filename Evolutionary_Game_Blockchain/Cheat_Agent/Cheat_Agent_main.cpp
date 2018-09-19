@@ -6,6 +6,7 @@
 #include <math.h>
 #include "Node.h"
 #include <cstdio>
+#include <string>
 
 using namespace std;
 
