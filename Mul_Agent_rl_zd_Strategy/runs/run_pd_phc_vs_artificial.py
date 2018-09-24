@@ -13,7 +13,7 @@ if __name__ == "__main__":
     deltaValue = 0.0001
     agentX = agentPHC(alpha=alpha, gamma=gammaValue, delta=deltaValue, epsilon=epsilon)
     # here I change the policy in dc states from 7.0/26.0 to 6.0/26.0.
-    agentY = agentFixedStrategy(alpha=alpha, gamma=gammaValue, delta=deltaValue, epsilon=epsilon, fixedStrategy=[0.8,0.8,0.0,0.0])
+    agentY = agentFixedStrategy(alpha=alpha, gamma=gammaValue, delta=deltaValue, epsilon=epsilon, fixedStrategy=[11.0/13.0, 0.5, 7.0/26.0, 0.0])
 
     pool = multiprocessing.Pool(processes=4)
     agentStrategyList = []
