@@ -23,7 +23,26 @@ if __name__ == "__main__":
     pool.join()
 
     myfile = open('../files/results/phc_vs_artificial.txt', 'w')
+    myFileStrHistory = open('../files/results/strHistory_phc_vs_artificial.txt', 'w')
+    loopTime = 0
+    strHistory = []
     for res in agentStrategyList:
+        if loopTime == 0:
+            strHistory = res.get()[:]
+            print ("dd")
+        else:
+            for iTime in range(len(res.get()[:])):
+                for itemKey in strHistory[iTime].keys():
+                    for i in range(len(strHistory[iTime][itemKey])):
+                        strHistory[iTime][itemKey][i] += res.get()[:][iTime][itemKey][i]
+        loopTime += 1
         print (res.get()[-1])
         myfile.write(str(res.get()[-1]) + '\n')
+    for iTime in range(len(strHistory)):
+        for itemKey in strHistory[iTime].keys():
+            for i in range(len(strHistory[iTime][itemKey])):
+                strHistory[iTime][itemKey][i] /= 4.0
+    print ("finish")
+    print (strHistory)
+
     myfile.close()

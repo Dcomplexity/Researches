@@ -44,7 +44,7 @@ def playOneGame(agentX=agentPHC, agentY=agentFixedStrategy):
             actionY = np.random.choice(actions)
             currentState = (actionX, actionY)
 
-        strategy_history.append(np.copy(agentX.getStrategy()))
+        strategy_history.append(copy.deepcopy(agentX.getStrategy()))
 
         agentX.setCurrentState(currentState)
         agentY.setCurrentState(currentState)
