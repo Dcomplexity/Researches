@@ -1,6 +1,7 @@
 import sys
 sys.path.append('..')
 
+import pandas as pd
 import multiprocessing
 from experiments.pd_phc_vs_fixed import *
 from agents.agentFixedStrategy import *
@@ -27,22 +28,30 @@ if __name__ == "__main__":
     loopTime = 0
     strHistory = []
     for res in agentStrategyList:
-        if loopTime == 0:
-            strHistory = res.get()[:]
-            print ("dd")
-        else:
-            for iTime in range(len(res.get()[:])):
-                for itemKey in strHistory[iTime].keys():
-                    for i in range(len(strHistory[iTime][itemKey])):
-                        strHistory[iTime][itemKey][i] += res.get()[:][iTime][itemKey][i]
-        loopTime += 1
-        print (res.get()[-1])
+        # print (loopTime)
+        # if loopTime == 0:
+        #     strHistory = res.get()[:]
+        # else:
+        #     for iTime in range(len(res.get()[:])):
+        #         print (iTime)
+        #         for itemKey in strHistory[iTime].keys():
+        #             for i in range(len(strHistory[iTime][itemKey])):
+        #                 strHistory[iTime][itemKey][i] += res.get()[:][iTime][itemKey][i]
+        # loopTime += 1
+        strHistory.append(pd.DataFrame(data=res.get()[:]))
+        # print (res.get()[-1])
         myfile.write(str(res.get()[-1]) + '\n')
-    for iTime in range(len(strHistory)):
-        for itemKey in strHistory[iTime].keys():
-            for i in range(len(strHistory[iTime][itemKey])):
-                strHistory[iTime][itemKey][i] /= 4.0
-    print ("finish")
-    print (strHistory)
-
     myfile.close()
+
+    # for iTime in range(len(strHistory)):
+    #     for itemKey in strHistory[iTime].keys():
+    #         for i in range(len(strHistory[iTime][itemKey])):
+    #             strHistory[iTime][itemKey][i] /= 4.0
+    # print ("finish")
+    #
+    # for iTime in range(len(strHistory)):
+    #     for itemKey in strHistory[iTime].keys():
+    #         myFileStrHistory.write(str(strHistory[iTime][itemKey][1]) + "\t")
+    #     myFileStrHistory.write("\n")
+    # myFileStrHistory.close()
+
