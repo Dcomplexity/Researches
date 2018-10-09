@@ -38,8 +38,9 @@ if __name__ == "__main__":
         #             for i in range(len(strHistory[iTime][itemKey])):
         #                 strHistory[iTime][itemKey][i] += res.get()[:][iTime][itemKey][i]
         # loopTime += 1
-        strHistory.append(pd.DataFrame(data=res.get()[:]))
+        #strHistory.append(pd.DataFrame(data=res.get()[:]))
         # print (res.get()[-1])
+        strHistory = res.get()[:]
         myfile.write(str(res.get()[-1]) + '\n')
     myfile.close()
 
@@ -49,9 +50,9 @@ if __name__ == "__main__":
     #             strHistory[iTime][itemKey][i] /= 4.0
     # print ("finish")
     #
-    # for iTime in range(len(strHistory)):
-    #     for itemKey in strHistory[iTime].keys():
-    #         myFileStrHistory.write(str(strHistory[iTime][itemKey][1]) + "\t")
-    #     myFileStrHistory.write("\n")
-    # myFileStrHistory.close()
+    for iTime in range(len(strHistory)):
+        for itemKey in strHistory[iTime].keys():
+            myFileStrHistory.write(str(strHistory[iTime][itemKey][1]) + "\t")
+        myFileStrHistory.write("\n")
+    myFileStrHistory.close()
 
