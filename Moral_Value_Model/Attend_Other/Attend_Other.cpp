@@ -53,7 +53,11 @@ int main(int argc, char* argv[]) {
     double co_number;
 
     double morValList[nodenumber];
+    double attendFlag[nodenumber];
+    double neighFlagNum[nodenumber];
     double attendNum[nodenumber];
+
+    vector<vector<int>> gameChain(nodenumber);
 
     double alpha = 0.05;
 
@@ -94,17 +98,23 @@ int main(int argc, char* argv[]) {
                         ostrategy[k] = strategy[k];
                         contribution[k] = 0;
                         coopNum[k] = 0;
-                        attendNum[k] = 0;
+                        attendFlag[k] = 0;
+                        neighFlagNum[k] = 0;
+                    }
+                    for (k = 0; k < nodenumber; k++) {
+                        double morPro = (double)rand() / RAND_MAX;
+                        if (morPro < morValList[k]) {
+                            attendFlag[k] = 1;
+                        }
                     }
                     for (k = 0; k < nodenumber; k++) {
                         p = node[k].head;
-                        double morPro = (double)rand() / RAND_MAX;
-                        if (morPro < morValList[k]){
-                            while (p != NULL) {
+                        while (p != NULL) {
+                            if (attendFlag[p->nodecode] == 1) {
                                 contribution[k] = contribution[k] + strategy[p->nodecode];
-                                attendNum[p->nodecode] += 1;
-                                p = p->next;
+                                neighFlagNum[p->nodecode] += 1;
                             }
+                            p = p->next;
                         }
                     }
                     for (k = 0; k < nodenumber; k++) {
