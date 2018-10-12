@@ -53,11 +53,10 @@ int main(int argc, char* argv[]) {
     double co_number;
 
     double morValList[nodenumber];
-    double attendFlag[nodenumber];
-    double neighFlagNum[nodenumber];
     double attendNum[nodenumber];
+//    double attendFlag[nodenumber];
+//    double neighFlagNum[nodenumber];
 
-    vector<vector<int>> gameChain(nodenumber);
 
     double alpha = 0.05;
 
@@ -93,36 +92,37 @@ int main(int argc, char* argv[]) {
                     morValList[k] = initialMorVal;
                 }
                 for (int pt = 0; pt < playtimes; pt++) {
+                    vector<vector<int>> gameChain(nodenumber, vector<int> (nodenumber));
+
                     for (k = 0; k < nodenumber; k++) {
                         payoffs[k] = 0;
                         ostrategy[k] = strategy[k];
                         contribution[k] = 0;
                         coopNum[k] = 0;
-                        attendFlag[k] = 0;
-                        neighFlagNum[k] = 0;
+                        attendNum[k] = 0;
                     }
-                    for (k = 0; k < nodenumber; k++) {
-                        double morPro = (double)rand() / RAND_MAX;
-                        if (morPro < morValList[k]) {
-                            attendFlag[k] = 1;
-                        }
-                    }
+
                     for (k = 0; k < nodenumber; k++) {
                         p = node[k].head;
                         while (p != NULL) {
-                            if (attendFlag[p->nodecode] == 1) {
+                            double morPro = (double)rand() / RAND_MAX;
+                            if (morPro < morValList[p->nodecode]) {
+                                // if the individual attend the public goods game, the flag is one.
+                                gameChain[k][p->nodecode] = 1;
                                 contribution[k] = contribution[k] + strategy[p->nodecode];
-                                neighFlagNum[p->nodecode] += 1;
+                                attendNum[p->nodecode] = attendNum[p->nodecode] + 1;
                             }
                             p = p->next;
                         }
                     }
+
                     for (k = 0; k < nodenumber; k++) {
                         p = node[k].head;
                         while (p != NULL) {
-                            // p->payoffs = contribution[p->nodecode] * r * 5 / (node[p->nodecode].neinumber() + 1);
+                            if (gameChain[p->nodecode][k] == 1)
+                            p->payoffs = contribution[p->nodecode] * r * 5 / (node[p->nodecode].neinumber() + 1);
                             // However, this network structure is a lattice.
-                            p->payoffs = contribution[p->nodecode] * r;
+                           // p->payoffs = contribution[p->nodecode] * r;
                             payoffs[k] = payoffs[k] + p->payoffs;
                             p = p->next;
                         }

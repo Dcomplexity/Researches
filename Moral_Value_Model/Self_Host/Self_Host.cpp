@@ -110,9 +110,9 @@ int main(int argc, char* argv[]) {
                     for (k = 0; k < nodenumber; k++) {
                         p = node[k].head;
                         while (p != NULL) {
-                            // p->payoffs = contribution[p->nodecode] * r * 5 / (node[p->nodecode].neinumber() + 1);
+                            p->payoffs = contribution[p->nodecode] * r * 5 / (node[p->nodecode].neinumber() + 1);
                             // However, this network structure is a lattice.
-                            p->payoffs = contribution[p->nodecode] * r;
+                            // p->payoffs = contribution[p->nodecode] * r;
                             payoffs[k] = payoffs[k] + p->payoffs;
                             p = p->next;
                         }
