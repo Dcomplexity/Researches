@@ -53,14 +53,14 @@ int main(int argc, char* argv[]) {
     double co_number;
 
     double morValList[nodenumber];
-    double attendNum[nodenumber];
-//    double attendFlag[nodenumber];
-//    double neighFlagNum[nodenumber];
-
+    double involveNum[nodenumber];
 
     double alpha = 0.05;
 
+    clock_t startTime, endTime;
+
     for (r = 0.2; r <= 2.05; r = r + 0.05) {
+        startTime = clock();
         f = 0;
         for (h_nets = 0; h_nets < nets; h_nets++) {
             list node[nodenumber];
@@ -92,41 +92,68 @@ int main(int argc, char* argv[]) {
                     morValList[k] = initialMorVal;
                 }
                 for (int pt = 0; pt < playtimes; pt++) {
-                    vector<vector<int>> gameChain(nodenumber, vector<int> (nodenumber));
+               //     vector<vector<int>> gameChain(nodenumber, vector<int> ());
+
+                    list gameChain[nodenumber];
+                    for (k = 0; k < nodenumber; k++) {
+                        gameChain[k].head->nodecode = k;
+                    }
+                    for (k = 0; k < nodenumber; k++) {
+                        gameChain[k].head->next = NULL;
+                    }
 
                     for (k = 0; k < nodenumber; k++) {
                         payoffs[k] = 0;
                         ostrategy[k] = strategy[k];
                         contribution[k] = 0;
                         coopNum[k] = 0;
-                        attendNum[k] = 0;
+                        involveNum[k] = 0;
                     }
+
+//                    for (k = 0; k < nodenumber; k++) {
+//                        p = node[k].head;
+//                        while (p != NULL) {
+//                            double morPro = (double)rand() / RAND_MAX;
+//                            if (morPro < morValList[p->nodecode]) {
+//                                // if the individual attend the public goods game, the flag is one.
+//                                gameChain[p->nodecode].push_back(k);
+//                                contribution[k] = contribution[k] + strategy[p->nodecode];
+//                                participateNum[k] = participateNum[k] + 1;
+//                            }
+//                            p = p->next;
+//                        }
+//                    }
+//
+//                    for (k = 0; k < nodenumber; k++) {
+//                        for (int kk = 0; kk < gameChain[k].size(); kk++) {
+//                           int hostNode = gameChain[k][kk];
+//                           payoffs[k] = payoffs[k] + contribution[hostNode] * r * 5 / participateNum[hostNode];
+//                        }
+//                        payoffs[k] = payoffs[k] - strategy[k] * gameChain[k].size();
+//                    }
 
                     for (k = 0; k < nodenumber; k++) {
                         p = node[k].head;
                         while (p != NULL) {
                             double morPro = (double)rand() / RAND_MAX;
                             if (morPro < morValList[p->nodecode]) {
-                                // if the individual attend the public goods game, the flag is one.
-                                gameChain[k][p->nodecode] = 1;
+                                gameChain[p->nodecode].insert(k);
                                 contribution[k] = contribution[k] + strategy[p->nodecode];
-                                attendNum[p->nodecode] = attendNum[p->nodecode] + 1;
+                                involveNum[k] = involveNum[k] + 1;
                             }
                             p = p->next;
                         }
                     }
-
                     for (k = 0; k < nodenumber; k++) {
-                        p = node[k].head;
+                        p = gameChain[k].head->next;
+                        // Here, we do not need to decide whether involveNum[p->nodecode] is 0.
+                        // Because, if p != NULL, means that the node k attend the public goods game hosted by p.
+                        // Then, the involveNum[p->nodecode] can not be 0.
                         while (p != NULL) {
-                            if (gameChain[p->nodecode][k] == 1)
-                            p->payoffs = contribution[p->nodecode] * r * 5 / (node[p->nodecode].neinumber() + 1);
-                            // However, this network structure is a lattice.
-                           // p->payoffs = contribution[p->nodecode] * r;
-                            payoffs[k] = payoffs[k] + p->payoffs;
+                            payoffs[k] = payoffs[k] + contribution[p->nodecode] * r * 5 / involveNum[p->nodecode];
                             p = p->next;
                         }
-                        payoffs[k] = payoffs[k] - strategy[k] * attendNum[k];
+                        payoffs[k] = payoffs[k] - strategy[k] * gameChain[k].neinumber();
                     }
                     // Imitating Process
                     for (k = 0; k < nodenumber; k++) {
@@ -169,7 +196,10 @@ int main(int argc, char* argv[]) {
         } // End h_nets
         f = f / (nets * runs * (playtimes - initialtimes));
         out_f << r << '\t' << f << endl;
-        cout << "End r" << '\t' << r << endl;
+        endTime = clock();
+        double totalTime;
+        totalTime = (double)(endTime - startTime) / CLOCKS_PER_SEC;
+        cout << "End r" << '\t' << r << '\t' << totalTime << "s" << endl;
     } // End r
 } // End main
 

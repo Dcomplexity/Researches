@@ -57,7 +57,10 @@ int main(int argc, char* argv[]) {
 
     double alpha = 0.05;
 
+    clock_t startTime, endTime;
+
     for (r = 0.2; r <= 2.05; r = r + 0.05) {
+        startTime = clock();
         f = 0;
         for (h_nets = 0; h_nets < nets; h_nets++) {
             list node[nodenumber];
@@ -110,10 +113,9 @@ int main(int argc, char* argv[]) {
                     for (k = 0; k < nodenumber; k++) {
                         p = node[k].head;
                         while (p != NULL) {
-                            p->payoffs = contribution[p->nodecode] * r * 5 / (node[p->nodecode].neinumber() + 1);
                             // However, this network structure is a lattice.
                             // p->payoffs = contribution[p->nodecode] * r;
-                            payoffs[k] = payoffs[k] + p->payoffs;
+                            payoffs[k] = payoffs[k] + contribution[p->nodecode] * r * 5 / (node[p->nodecode].neinumber() + 1);
                             p = p->next;
                         }
                         payoffs[k] = payoffs[k] - strategy[k] * attendNum[k];
@@ -159,7 +161,10 @@ int main(int argc, char* argv[]) {
         } // End h_nets
         f = f / (nets * runs * (playtimes - initialtimes));
         out_f << r << '\t' << f << endl;
-        cout << "End r" << '\t' << r << endl;
+        endTime = clock();
+        double totalTime;
+        totalTime = (double)(endTime - startTime) / CLOCKS_PER_SEC;
+        cout << "End r" << '\t' << r << '\t' << totalTime << "s" << endl;
     } // End r
 } // End main
 

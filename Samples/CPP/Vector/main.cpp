@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
+
 using namespace std;
 int staNum = 5;
 int actNum = 2;
@@ -43,19 +45,29 @@ int main(int argc, char const *argv[])
 //            }
 //        }
 //    }
-    vector<vector<int>> gameChain (10000, vector<int> ());
-    for (int i = 0; i < gameChain.size(); i++) {
-        for (int j = 0; j < 10; j++) {
-            gameChain[i].push_back(j);
-        }
-    }
-    for (int i = 0; i < gameChain.size(); i++) {
-        for (int j = 0; j < gameChain[i].size(); j++) {
-            cout << gameChain[i][j] << "\t";
-        }
-        cout << endl;
-    }
 
-    
-    return 0;
+//    vector<vector<int>> gameChain (10000, vector<int> ());
+//    for (int i = 0; i < gameChain.size(); i++) {
+//        for (int j = 0; j < 10; j++) {
+//            gameChain[i].push_back(j);
+//        }
+//    }
+//    for (int i = 0; i < gameChain.size(); i++) {
+//        for (int j = 0; j < gameChain[i].size(); j++) {
+//            cout << gameChain[i][j] << "\t";
+//        }
+//        cout << endl;
+//    }
+
+    vector<int> vec;
+    for (int i = 0; i < 5; i++) {
+        vec.push_back(i);
+    }
+    int wantValue = 4;
+    for (int i = 0; i < vec.size(); i++) {
+        if (vec[i] == wantValue) {
+            cout << "found it" << '\t' << vec[i] << endl;
+            break;
+        }
+    }
 }
