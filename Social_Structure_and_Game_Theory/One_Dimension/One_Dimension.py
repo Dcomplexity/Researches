@@ -196,7 +196,7 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
 if __name__ == "__main__":
     buildGroupSize = 1
     buildGroupBase = 2
-    buildGroupLength = 4
+    buildGroupLength = 10
     buildTotalNum = buildGroupSize * (buildGroupBase ** (buildGroupLength - 1))
     (buildIndPos, buildPosInd) = buildStrucure(buildGroupSize, buildGroupBase, buildGroupLength)
 
@@ -214,14 +214,14 @@ if __name__ == "__main__":
     filename = "Co_Rate_DefectParam_%s.txt" %buildDefectParam
     f = open(filename, 'w')
 
-    rounds = 2
+    rounds = 10
     buildIndStrategy = initailizeStrategy(buildTotalNum)
     buildResults = []
     for buildAlpha in range(-1, 4):
         for buildBeta in range(-1, 4):
             roundResults = np.zeros(rounds)
             for roundIndex in range(rounds):
-                for i in range(10):
+                for i in range(2000):
                     buildIndStrategy = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd)
                 roundResults[roundIndex] = np.mean(buildIndStrategy)
             finalResults = np.mean(roundResults)
