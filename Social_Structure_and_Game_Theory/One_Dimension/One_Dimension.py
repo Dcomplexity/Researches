@@ -1,4 +1,5 @@
 import numpy as np
+import random
 import math
 
 class socialStructure():
@@ -134,10 +135,9 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
     :return:
         newIndStrategy: strategies of each individuals which have been updated
     """
-    print (totalNum)
-    oldStrategy = np.zeros(totalNum)
+    oldIndStrategy = np.zeros(totalNum)
     for i in range(totalNum):
-        oldStrategy[i] = indStrategy[i]
+        oldIndStrategy[i] = indStrategy[i]
 
     opponentPlay = np.zeros(totalNum, dtype=int)
     opponentLearn = np.zeros(totalNum, dtype=int)
@@ -175,25 +175,41 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
     # player tries to update his strategy
     for i in range(totalNum):
         playerIndex = i
-        opponentIndex = opponentLearn[i]
+        w1 = 0.01
+        w2 = random.random()
+        if w1 > w2:
+            if indStrategy[playerIndex] == 1:
+                indStrategy[playerIndex] = 0
+            else:
+                indStrategy[playerIndex] = 1
+        else:
+            opponentIndex = opponentLearn[i]
+            t1 = 1 / (1 + math.e ** (10 * (payoffs[playerIndex] - payoffs[opponentIndex])))
+            t2 = random.random()
+            if t2 < t1:
+                indStrategy[playerIndex] = oldIndStrategy[opponentIndex]
 
+    return indStrategy
 
 
 if __name__ == "__main__":
     buildGroupSize = 1
     buildGroupBase = 2
-    buildGroupLength = 4
+    buildGroupLength = 11
     buildTotalNum = buildGroupSize * (buildGroupBase ** (buildGroupLength - 1))
     (buildIndPos, buildPosInd) = buildStrucure(buildGroupSize, buildGroupBase, buildGroupLength)
 
     buildAlpha = 0
     buildBeta = 0
     buildPlayNum = 1
-    buildDefectParam = 1.5
+    buildDefectParam = 0.9
 
     buildIndStrategy = initailizeStrategy(buildTotalNum)
-    runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd)
+    for i in range(100):
+        print (i)
+        buildIndStrategy = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd)
 
+    print (np.mean(buildIndStrategy))
     # indOldStrategy = np.zeros(buildTotalNum)
     # indPayoffs = np.zeros(buildTotalNum)
     #
