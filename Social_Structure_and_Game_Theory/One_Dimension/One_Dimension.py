@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import math
+import argparse
 
 class socialStructure():
     """Classify a social strucutre
@@ -195,21 +196,41 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
 if __name__ == "__main__":
     buildGroupSize = 1
     buildGroupBase = 2
-    buildGroupLength = 11
+    buildGroupLength = 4
     buildTotalNum = buildGroupSize * (buildGroupBase ** (buildGroupLength - 1))
     (buildIndPos, buildPosInd) = buildStrucure(buildGroupSize, buildGroupBase, buildGroupLength)
 
-    buildAlpha = 0
-    buildBeta = 0
+
+    # buildAlpha = 0
+    # buildBeta = 0
     buildPlayNum = 1
-    buildDefectParam = 0.9
+    # buildDefectParam = 0.9
 
+    parser = argparse.ArgumentParser(description="Set the buildDefectParam")
+    parser.add_argument('-d', '--defectParam', type=float, required=True, help='Set the defect Parameter')
+    args = parser.parse_args()
+    buildDefectParam = args.defectParam
+
+    filename = "Co_Rate_DefectParam_%s.txt" %buildDefectParam
+    f = open(filename, 'w')
+
+    rounds = 2
     buildIndStrategy = initailizeStrategy(buildTotalNum)
-    for i in range(100):
-        print (i)
-        buildIndStrategy = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd)
+    buildResults = []
+    for buildAlpha in range(-1, 4):
+        for buildBeta in range(-1, 4):
+            roundResults = np.zeros(rounds)
+            for roundIndex in range(rounds):
+                for i in range(10):
+                    buildIndStrategy = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd)
+                roundResults[roundIndex] = np.mean(buildIndStrategy)
+            finalResults = np.mean(roundResults)
+            buildResults.append(finalResults)
+            f.write(str(buildAlpha) + '\t' + str(buildBeta) + '\t' + str(finalResults) + '\n')
+    f.close()
+    print (buildResults)
 
-    print (np.mean(buildIndStrategy))
+
     # indOldStrategy = np.zeros(buildTotalNum)
     # indPayoffs = np.zeros(buildTotalNum)
     #
