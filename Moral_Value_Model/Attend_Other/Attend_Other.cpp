@@ -155,6 +155,19 @@ int main(int argc, char* argv[]) {
                         }
                         payoffs[k] = payoffs[k] - strategy[k] * gameChain[k].neinumber();
                     }
+//                    for (k = 0; k < nodenumber; k++) {
+//                        if (strategy[k] == 0) {
+//                            p = node[k].head;
+//                            float neighCoNum = 0.0;
+//                            while (p != NULL) {
+//                                if (strategy[p->nodecode] == 1) {
+//                                    neighCoNum += 1.0;
+//                                }
+//                                p = p->next;
+//                            }
+//                            morValList[k] = morValList[k] - morValList[k] * pow(neighCoNum/(node[k].neinumber() + 1), 2);
+//                        }
+//                    }
                     // Imitating Process
                     for (k = 0; k < nodenumber; k++) {
                         double w1 = 0.01;
