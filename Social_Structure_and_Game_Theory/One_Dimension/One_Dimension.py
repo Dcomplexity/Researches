@@ -214,7 +214,7 @@ if __name__ == "__main__":
     filename = "Co_Rate_DefectParam_%s.txt" %buildDefectParam
     f = open(filename, 'w')
 
-    rounds = 10
+    rounds = 5
     buildIndStrategy = initailizeStrategy(buildTotalNum)
     buildResults = []
     for buildAlpha in range(-1, 4):
@@ -222,7 +222,7 @@ if __name__ == "__main__":
             print (buildAlpha, buildBeta)
             roundResults = np.zeros(rounds)
             for roundIndex in range(rounds):
-                for i in range(2000):
+                for i in range(1000):
                     buildIndStrategy = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd)
                 roundResults[roundIndex] = np.mean(buildIndStrategy)
             finalResults = np.mean(roundResults)
