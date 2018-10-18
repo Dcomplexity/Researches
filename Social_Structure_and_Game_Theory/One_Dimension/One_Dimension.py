@@ -19,7 +19,7 @@ class socialStructure():
         self. groupLength = groupLength
         self.totalNum = totalNum
 
-        if self.totalNum != self.groupSize * (self.groupBase ** self.groupLength):
+        if self.totalNum != self.groupSize * (self.groupBase ** (self.groupLength-1)):
             print ("Error: The totalNum dose not correspond to the social structure")
 
 
@@ -31,7 +31,7 @@ class socialStructure():
             indPos (dict) : individual index -> position
             posInd (dict) : position -> individual index
         """
-        self.groupNum = self.groupBase ** self.groupLength
+        self.groupNum = self.groupBase ** (self.groupLength-1)
         self.indPos = [0 for x in range(self.totalNum)]
         self.posInd = [[] for x in range(self.groupNum)]
 
@@ -57,7 +57,7 @@ def PDGame(strategy0, strategy1, b):
         return "Error"
 
 def buildStrucure(strucGroupSize, strucGroupBase, strucGroupLength):
-    strucTotalNum = strucGroupSize * (strucGroupBase ** strucGroupLength)
+    strucTotalNum = strucGroupSize * (strucGroupBase ** (strucGroupLength-1))
     strucSocialStructure = socialStructure(strucGroupSize, strucGroupBase, strucGroupLength, strucTotalNum)
     (strucIndPos, strucPosInd) = strucSocialStructure.buildSocialStructure()
     return (strucIndPos, strucPosInd)
@@ -136,6 +136,8 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
     :return:
         newIndStrategy: strategies of each individuals which have been updated
     """
+    if totalNum != len(indPos):
+        print ("error")
     oldIndStrategy = np.zeros(totalNum)
     for i in range(totalNum):
         oldIndStrategy[i] = indStrategy[i]
@@ -194,12 +196,13 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
 
 
 if __name__ == "__main__":
-    buildGroupSize = 2
+    buildGroupSize = 1
     buildGroupBase = 2
-    buildGroupLength = 9
+    buildGroupLength = 11
     buildTotalNum = buildGroupSize * (buildGroupBase ** (buildGroupLength - 1))
     (buildIndPos, buildPosInd) = buildStrucure(buildGroupSize, buildGroupBase, buildGroupLength)
-
+    print (buildIndPos)
+    print (buildPosInd)
 
     # buildAlpha = 0
     # buildBeta = 0
