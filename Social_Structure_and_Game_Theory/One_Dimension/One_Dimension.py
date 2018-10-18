@@ -194,9 +194,9 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
 
 
 if __name__ == "__main__":
-    buildGroupSize = 4
+    buildGroupSize = 2
     buildGroupBase = 2
-    buildGroupLength = 8
+    buildGroupLength = 9
     buildTotalNum = buildGroupSize * (buildGroupBase ** (buildGroupLength - 1))
     (buildIndPos, buildPosInd) = buildStrucure(buildGroupSize, buildGroupBase, buildGroupLength)
 
