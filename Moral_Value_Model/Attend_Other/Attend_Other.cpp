@@ -55,6 +55,9 @@ int main(int argc, char* argv[]) {
     double morValList[nodenumber];
     double involveNum[nodenumber];
 
+    // This value is to store the Frequence of Strategy used to show the final state.
+    double strategyFre[nodenumber];
+
     double alpha = 0.05;
 
     clock_t startTime, endTime;
@@ -91,8 +94,22 @@ int main(int argc, char* argv[]) {
                 for (k = 0; k < nodenumber; k++) {
                     morValList[k] = initialMorVal;
                 }
+                for (k = 0; k < nodenumber; k++) {
+                    strategyFre[k] = 0.0;
+                }
                 for (int pt = 0; pt < playtimes; pt++) {
                //     vector<vector<int>> gameChain(nodenumber, vector<int> ());
+
+                    if (r == 0.2 && pt == 0) {
+                        ofstream fStart("strategy_matrix_start.txt");
+                        for (int ki = 0; ki < 100; ki++) {
+                            for (int kj = 0; kj < 100; kj++) {
+                                fStart << strategy[ki * 100 + kj] << " ";
+                            }
+                            fStart << '\n';
+                        }
+                        fStart.close();
+                    }
 
                     list gameChain[nodenumber];
                     for (k = 0; k < nodenumber; k++) {
@@ -144,6 +161,7 @@ int main(int argc, char* argv[]) {
                             p = p->next;
                         }
                     }
+
                     for (k = 0; k < nodenumber; k++) {
                         p = gameChain[k].head->next;
                         // Here, we do not need to decide whether involveNum[p->nodecode] is 0.
@@ -155,19 +173,21 @@ int main(int argc, char* argv[]) {
                         }
                         payoffs[k] = payoffs[k] - strategy[k] * gameChain[k].neinumber();
                     }
-//                    for (k = 0; k < nodenumber; k++) {
-//                        if (strategy[k] == 0) {
-//                            p = node[k].head;
-//                            float neighCoNum = 0.0;
-//                            while (p != NULL) {
-//                                if (strategy[p->nodecode] == 1) {
-//                                    neighCoNum += 1.0;
-//                                }
-//                                p = p->next;
-//                            }
-//                            morValList[k] = morValList[k] - morValList[k] * pow(neighCoNum/(node[k].neinumber() + 1), 2);
-//                        }
-//                    }
+
+                    for (k = 0; k < nodenumber; k++) {
+                        if (strategy[k] == 0) {
+                            p = node[k].head;
+                            float neighCoNum = 0.0;
+                            while (p != NULL) {
+                                if (strategy[p->nodecode] == 1) {
+                                    neighCoNum += 1.0;
+                                }
+                                p = p->next;
+                            }
+                            morValList[k] = morValList[k] - morValList[k] * neighCoNum/(node[k].neinumber() + 1);
+                        }
+                    }
+
                     // Imitating Process
                     for (k = 0; k < nodenumber; k++) {
                         double w1 = 0.01;
@@ -194,6 +214,7 @@ int main(int argc, char* argv[]) {
                             }
                         }
                     }
+
                     if (pt >= initialtimes) {
                         cnumber = 0;
                         for (k = 0; k < nodenumber; k++) {
@@ -203,6 +224,30 @@ int main(int argc, char* argv[]) {
                         }
                         cnumber = cnumber / nodenumber;
                         f =  f + cnumber;
+                    }
+
+                    if (h_nets == nets-1 && h_runs == runs-1 && r == 0.2)
+                    {
+                        if (pt >= initialtimes) {
+                            for (k = 0; k < nodenumber; k++) {
+                                strategyFre[k] += strategy[k];
+                            }
+                        }
+                    }
+
+                    if (pt == playtimes-1 && h_nets == nets-1 && h_runs == runs-1 && r == 0.2) {
+                        int finalNums = playtimes - initialtimes;
+                        for (k = 0; k < nodenumber; k++) {
+                            strategyFre[k] = strategyFre[k] / finalNums;
+                        }
+                        ofstream fFinal("strategy_matrix_final.txt");
+                        for (int ki = 0; ki < 100; ki++){
+                            for (int kj = 0; kj < 100; kj++) {
+                                fFinal << strategyFre[ki * 100 + kj] << " ";
+                            }
+                            fFinal << '\n';
+                        }
+                        fFinal.close();
                     }
                 } // End pt
             } // End h_runs
