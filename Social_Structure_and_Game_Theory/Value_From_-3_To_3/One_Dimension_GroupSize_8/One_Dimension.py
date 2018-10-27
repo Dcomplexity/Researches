@@ -2,6 +2,7 @@ import numpy as np
 import random
 import math
 import argparse
+import os
 
 class socialStructure():
     """Classify a social strucutre
@@ -214,14 +215,18 @@ if __name__ == "__main__":
     args = parser.parse_args()
     buildDefectParam = args.defectParam
 
-    filename = "Co_Rate_GroupSiz_4_DefectParam_%s.txt" %buildDefectParam
+    abspath = os.path.abspath(os.path.join(os.getcwd(), "../../"))
+    dirname = abspath + "/Results/Value_From_-3_To_3/One_Dimension_GroupSize_8/"
+    if not os.path.isdir(dirname):
+        os.makedirs(dirname)
+    filename = dirname + "Co_Rate_GroupSiz_8_DefectParam_%s.txt" %buildDefectParam
     f = open(filename, 'w')
 
     rounds = 5
     buildIndStrategy = initailizeStrategy(buildTotalNum)
     buildResults = []
-    for buildAlpha in range(-1, 4):
-        for buildBeta in range(-1, 4):
+    for buildAlpha in range(-3, 4):
+        for buildBeta in range(-3, 4):
             print (buildAlpha, buildBeta)
             roundResults = np.zeros(rounds)
             for roundIndex in range(rounds):
