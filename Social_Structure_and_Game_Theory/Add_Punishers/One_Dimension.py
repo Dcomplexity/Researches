@@ -229,7 +229,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     buildDefectParam = args.defectParam
 
-    abspath = os.path.abspath(os.path.join(os.getcwd(), "../../"))
+    abspath = os.path.abspath(os.path.join(os.getcwd(), "../"))
     dirname = abspath + "/Results/Add_Punisher/One_Dimension_GroupSize_2/"
     if not os.path.isdir(dirname):
         os.makedirs(dirname)
