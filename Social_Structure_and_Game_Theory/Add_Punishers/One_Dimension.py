@@ -240,10 +240,13 @@ if __name__ == "__main__":
             for roundIndex in range(rounds):
                 for i in range(1000):
                     buildIndStrategy = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd)
-                roundResults[roundIndex] = np.mean(buildIndStrategy)
-            finalResults = np.mean(roundResults)
+                strategyFre = np.zeros(3)
+                for strategyIndex in buildIndStrategy:
+                    strategyFre[strategyIndex] += 1
+                roundResults[roundIndex] = strategyFre / buildTotalNum
+            finalResults = np.mean(roundResults, axis=0)
             buildResults.append(finalResults)
-            f.write(str(buildAlpha) + '\t' + str(buildBeta) + '\t' + str(finalResults) + '\n')
+            f.write(str(buildAlpha) + '\t' + str(buildBeta) + '\t' + str(finalResults[0]) + '\t' + str(finalResults[1]) + '\t' + str(finalResults[2]) + '\n')
     f.close()
     print (buildResults)
 
