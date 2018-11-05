@@ -231,11 +231,11 @@ if __name__ == "__main__":
     f = open(filename, 'w')
 
     rounds = 5
-    buildIndStrategy = initailizeStrategy(buildTotalNum)
     buildResults = []
     for buildAlpha in range(-3, 4):
         for buildBeta in range(-3, 4):
             print (buildAlpha, buildBeta)
+            buildIndStrategy = initailizeStrategy(buildTotalNum) 
             roundResults = np.zeros(rounds)
             for roundIndex in range(rounds):
                 for i in range(1000):

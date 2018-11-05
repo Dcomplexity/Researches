@@ -225,9 +225,9 @@ if __name__ == "__main__":
     for buildAlpha in range(-3, 4):
         for buildBeta in range(-3, 4):
             print (buildAlpha, buildBeta)
-            buildIndStrategy = initailizeStrategy(buildTotalNum)
             roundResults = np.zeros(rounds)
             for roundIndex in range(rounds):
+                buildIndStrategy = initailizeStrategy(buildTotalNum)
                 for i in range(1000):
                     buildIndStrategy = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd)
                 roundResults[roundIndex] = np.mean(buildIndStrategy)

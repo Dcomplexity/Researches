@@ -197,9 +197,9 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
 
 
 if __name__ == "__main__":
-    buildGroupSize = 4
+    buildGroupSize = 2
     buildGroupBase = 2
-    buildGroupLength = 9
+    buildGroupLength = 10
     buildTotalNum = buildGroupSize * (buildGroupBase ** (buildGroupLength - 1))
     (buildIndPos, buildPosInd) = buildStrucure(buildGroupSize, buildGroupBase, buildGroupLength)
     print (buildIndPos)
@@ -216,10 +216,10 @@ if __name__ == "__main__":
     buildDefectParam = args.defectParam
 
     abspath = os.path.abspath(os.path.join(os.getcwd(), "../../"))
-    dirname = abspath + "/Results/New_Value_From_-3_To_3/One_Dimension_GroupSize_4/"
+    dirname = abspath + "/Results/New_Value_From_-3_To_3/One_Dimension_GroupSize_2/"
     if not os.path.isdir(dirname):
         os.makedirs(dirname)
-    filename = dirname + "Co_Rate_GroupSiz_4_DefectParam_%s.txt" %buildDefectParam
+    filename = dirname + "Co_Rate_GroupSize_2_DefectParam_%s.txt" %buildDefectParam
     f = open(filename, 'w')
 
     rounds = 5
@@ -227,9 +227,9 @@ if __name__ == "__main__":
     for buildAlpha in range(-3, 4):
         for buildBeta in range(-3, 4):
             print (buildAlpha, buildBeta)
-            buildIndStrategy = initailizeStrategy(buildTotalNum)
             roundResults = np.zeros(rounds)
             for roundIndex in range(rounds):
+                buildIndStrategy = initailizeStrategy(buildTotalNum)
                 for i in range(1000):
                     buildIndStrategy = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd)
                 roundResults[roundIndex] = np.mean(buildIndStrategy)
