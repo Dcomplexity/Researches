@@ -131,7 +131,13 @@ def pickIndividual(positions, posInd):
     return int(indIndex)
 
 def initailizeStrategy(totalNum):
-    indStrategy = np.random.randint(0, 3, totalNum)
+    indStrategy = np.random.randint(0, 2, totalNum)
+    for i in range(len(indStrategy)):
+        if  indStrategy[i] == 1:
+            if np.random.binomial(1, 0.5) == 1:
+                indStrategy[i] = 1
+            else:
+                indStrategy[i] = 2
     return indStrategy
 
 
@@ -230,20 +236,21 @@ if __name__ == "__main__":
     filename = dirname + "Co_Rate_GroupSize_2_DefectParam_%s.txt" %buildDefectParam
     f = open(filename, 'w')
 
-    rounds = 5
+    rounds = 2
     buildResults = []
     for buildAlpha in range(-3, 4):
         for buildBeta in range(-3, 4):
             print (buildAlpha, buildBeta)
-            roundResults = np.zeros(rounds)
+            roundResults = []
             for roundIndex in range(rounds):
                 buildIndStrategy = initailizeStrategy(buildTotalNum) 
-                for i in range(1000):
+                for i in range(1):
                     buildIndStrategy = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd)
                 strategyFre = np.zeros(3)
                 for strategyIndex in buildIndStrategy:
                     strategyFre[strategyIndex] += 1
-                roundResults[roundIndex] = strategyFre / buildTotalNum
+                roundResults.append(strategyFre / buildTotalNum)
+            roundResults = np.array(roundResults)
             finalResults = np.mean(roundResults, axis=0)
             buildResults.append(finalResults)
             f.write(str(buildAlpha) + '\t' + str(buildBeta) + '\t' + str(finalResults[0]) + '\t' + str(finalResults[1]) + '\t' + str(finalResults[2]) + '\n')
