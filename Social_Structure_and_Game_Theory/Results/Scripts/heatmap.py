@@ -11,7 +11,11 @@ for root, dirs, files in os.walk(dirname):
     for filename in files:
         print (filename)
 
-picFilename = dirname + files[0]
+if ".DS_Store" in files:
+    files.remove(".DS_Store")
+files.sort()
+
+picFilename = dirname + files[3]
 fPic = open(picFilename)
 data = []
 for line in fPic.readlines():
@@ -35,4 +39,4 @@ ax.set_xticklabels(xlabel)
 ax.set_yticklabels(ylabel)
 plt.xlabel("Interaction_Distance_Param (Alpha)")
 plt.ylabel("Update_Distance_Param (Beta)")
-plt.savefig()
+plt.show()
