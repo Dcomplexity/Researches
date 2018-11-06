@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import os
 
 abspath = os.path.abspath(os.path.join(os.getcwd(), "../"))
-dirname = abspath + "/Value_From_-3_To_3/One_Dimension_GroupSize_2/"
+dirname = abspath + "/New_Value_From_-3_To_3/One_Dimension_GroupSize_2/"
 for root, dirs, files in os.walk(dirname):
     for filename in files:
         print (filename)
@@ -37,6 +37,6 @@ ylabel = range(-3, 4)
 ax = sns.heatmap(picData, cmap="YlGnBu")
 ax.set_xticklabels(xlabel)
 ax.set_yticklabels(ylabel)
-plt.xlabel("Interaction_Distance_Param (Alpha)")
-plt.ylabel("Update_Distance_Param (Beta)")
+plt.xlabel("Interaction_Distance_Param " + r"$\alpha$")
+plt.ylabel("Update_Distance_Param " + r"$\beta$")
 plt.show()

@@ -6,12 +6,13 @@ import matplotlib.pyplot as plt
 import os
 
 abspath = os.path.abspath(os.path.join(os.getcwd(), "../"))
-dirname = abspath + "/Value_From_-3_To_3/One_Dimension_GroupSize_2/"
+dirname = abspath + "/New_Value_From_-3_To_3/One_Dimension_GroupSize_2/"
 for root, dirs, files in os.walk(dirname):
     for filename in files:
         print (filename)
-files.remove(".DS_Store")
-files.sort()
+    if ".DS_Store" in files:
+        files.remove(".DS_Store")
+    files.sort()
 print (files)
 
 picFilename = []
@@ -47,7 +48,7 @@ ylabel = range(-3, 4)
 ax = sns.heatmap(picData[0], cmap="YlGnBu", center = 0.5)
 ax.set_xticklabels(xlabel)
 ax.set_yticklabels(ylabel)
-plt.ylabel("Update_Distance_Param (Beta)")
+plt.ylabel("Update_Distance_Param " + r"$\beta$")
 
 plt.subplot(2, 2, 2)
 plt.title("b=1.0")
@@ -64,8 +65,8 @@ ylabel = range(-3, 4)
 ax = sns.heatmap(picData[2], cmap="YlGnBu", center=0.5)
 ax.set_xticklabels(xlabel)
 ax.set_yticklabels(ylabel)
-plt.xlabel("Interaction_Distance_Param (Alpha)")
-plt.ylabel("Update_Distance_Param (Beta)")
+plt.xlabel("Interaction_Distance_Param " + r"$\alpha$")
+plt.ylabel("Update_Distance_Param " + r"$\beta$")
 
 plt.subplot(2, 2, 4)
 plt.title("b=1.2")
@@ -74,6 +75,5 @@ ylabel = range(-3, 4)
 ax = sns.heatmap(picData[3], cmap="YlGnBu", center=0.5)
 ax.set_xticklabels(xlabel)
 ax.set_yticklabels(ylabel)
-plt.xlabel("Interaction_Distance_Param (Alpha)")
-
+plt.xlabel("Interaction_Distance_Param " + r"$\alpha$")
 plt.show()
