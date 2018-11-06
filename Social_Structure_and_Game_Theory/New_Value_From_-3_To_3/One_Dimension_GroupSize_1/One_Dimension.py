@@ -228,7 +228,7 @@ if __name__ == "__main__":
             roundResults = np.zeros(rounds)
             for roundIndex in range(rounds):
                 buildIndStrategy = initailizeStrategy(buildTotalNum)
-                for i in range(1000):
+                for i in range(50):
                     buildIndStrategy = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd)
                 roundResults[roundIndex] = np.mean(buildIndStrategy)
             finalResults = np.mean(roundResults)
