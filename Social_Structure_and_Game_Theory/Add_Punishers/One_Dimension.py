@@ -238,13 +238,13 @@ if __name__ == "__main__":
 
     rounds = 5
     buildResults = []
-    for buildAlpha in range(-1, 4):
-        for buildBeta in range(-1, 4):
+    for buildAlpha in range(-3, 4):
+        for buildBeta in range(-3, 4):
             print (buildAlpha, buildBeta)
             roundResults = []
             for roundIndex in range(rounds):
                 buildIndStrategy = initailizeStrategy(buildTotalNum) 
-                for i in range(1000):
+                for i in range(50):
                     buildIndStrategy = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd)
                 strategyFre = np.zeros(3)
                 for strategyIndex in buildIndStrategy:

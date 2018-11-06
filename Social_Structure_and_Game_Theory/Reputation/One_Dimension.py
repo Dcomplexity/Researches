@@ -269,8 +269,8 @@ if __name__ == "__main__":
 
     rounds = 5
     buildResults = []
-    for buildAlpha in range(-1, 4):
-        for buildBeta in range(-1, 4):
+    for buildAlpha in range(-3, 4):
+        for buildBeta in range(-3, 4):
             print (buildAlpha, buildBeta)
             roundResults = np.zeros(rounds)
             for roundIndex in range(rounds):
