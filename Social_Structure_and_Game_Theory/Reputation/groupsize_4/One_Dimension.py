@@ -127,6 +127,7 @@ def buildRep(indStrategy, posInd, groupBase, groupLength):
     First build reputation system, the reputaion of a community is based on the fraction of cooperators.
     :param
     indStrategy: the strategy of individuals
+    posInd: position->individual
     groupBase: 2
     groupLength: to calculate the number of groups
     :return
@@ -142,7 +143,7 @@ def buildRep(indStrategy, posInd, groupBase, groupLength):
         positionRep[i] = coNum / len(posInd[i])
     return positionRep
 
-def pickIndividualBasedRep(positionRepFre, positions, posInd):
+def pickIndividualBasedRep(positionRep, positions, posInd):
     """
     Higher the reputation is, the more likely the community will be picked.
     Then pick an individual randomly from this community.
@@ -155,7 +156,7 @@ def pickIndividualBasedRep(positionRepFre, positions, posInd):
     potentialInd = []
     potentialPosRep = []
     for i in positions:
-        potentialPosRep.append(positionRepFre[i])
+        potentialPosRep.append(positionRep[i])
     sumRep = np.sum(potentialPosRep)
     if sumRep == 0:
         potentialPosRepFre = [1/len(potentialPosRep) for x in range(len(potentialPosRep))]

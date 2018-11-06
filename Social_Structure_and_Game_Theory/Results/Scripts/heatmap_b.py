@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import os
 
 abspath = os.path.abspath(os.path.join(os.getcwd(), "../"))
-dirname = abspath + "/New_Value_From_-3_To_3/One_Dimension_GroupSize_2/"
+dirname = abspath + "/New_Value_From_-3_To_3/One_Dimension_GroupSize_8/"
 for root, dirs, files in os.walk(dirname):
     for filename in files:
         print (filename)

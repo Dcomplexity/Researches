@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 import os
 
 abspath = os.path.abspath(os.path.join(os.getcwd(), "../"))
-dirname1 = abspath + "/Value_From_-3_To_3/One_Dimension_GroupSize_1/"
-dirname2 = abspath + "/Value_From_-3_To_3/One_Dimension_GroupSize_2/"
-dirname4 = abspath + "/Value_From_-3_To_3/One_Dimension_GroupSize_4/"
-dirname8 = abspath + "/Value_From_-3_To_3/One_Dimension_GroupSize_8/"
+dirname1 = abspath + "/New_Value_From_-3_To_3/One_Dimension_GroupSize_1/"
+dirname2 = abspath + "/New_Value_From_-3_To_3/One_Dimension_GroupSize_2/"
+dirname4 = abspath + "/New_Value_From_-3_To_3/One_Dimension_GroupSize_4/"
+dirname8 = abspath + "/New_Value_From_-3_To_3/One_Dimension_GroupSize_8/"
 dirname = [dirname1, dirname2, dirname4, dirname8]
 filesName = []
 for i in range(4):
@@ -54,7 +54,7 @@ ylabel = range(-3, 4)
 ax = sns.heatmap(picData[0], cmap="YlGnBu", center = 0.5)
 ax.set_xticklabels(xlabel)
 ax.set_yticklabels(ylabel)
-plt.ylabel("Update_Distance_Param (Beta)")
+plt.ylabel("Update_Distance_Param " + r"$\beta$")
 
 plt.subplot(2, 2, 2)
 plt.title("Group Size = 2")
@@ -71,8 +71,8 @@ ylabel = range(-3, 4)
 ax = sns.heatmap(picData[2], cmap="YlGnBu", center=0.5)
 ax.set_xticklabels(xlabel)
 ax.set_yticklabels(ylabel)
-plt.xlabel("Interaction_Distance_Param (Alpha)")
-plt.ylabel("Update_Distance_Param (Beta)")
+plt.xlabel("Interaction_Distance_Param " + r"$\alpha$")
+plt.ylabel("Update_Distance_Param " + r"$\beta$")
 
 plt.subplot(2, 2, 4)
 plt.title("Group Size = 8")
@@ -81,6 +81,6 @@ ylabel = range(-3, 4)
 ax = sns.heatmap(picData[3], cmap="YlGnBu", center=0.5)
 ax.set_xticklabels(xlabel)
 ax.set_yticklabels(ylabel)
-plt.xlabel("Interaction_Distance_Param (Alpha)")
+plt.xlabel("Interaction_Distance_Param " + r"$\alpha$")
 
 plt.show()
