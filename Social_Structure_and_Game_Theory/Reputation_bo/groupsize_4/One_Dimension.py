@@ -161,7 +161,7 @@ def pickIndividualBasedRep(positionRep, positions, posInd):
     if sumRep == 0:
         potentialPosRepFre = [1/len(potentialPosRep) for x in range(len(potentialPosRep))]
     else:
-        potentialPosRep = potentialPosRep ** 3 # amplify the effect
+        potentialPosRep = np.array(potentialPosRep) ** 3 # amplify the effect
         potentialPosRepFre = potentialPosRep / np.sum(potentialPosRep)
     potentialPosIndex = np.random.choice(positions, 1, p=potentialPosRepFre)[0]
     for j in posInd[potentialPosIndex]:

@@ -169,7 +169,7 @@ def pickIndividualBasedRep(focInd, positionRep, positions, posInd, indPos):
     for i in potentialPosRep:
         repDistance = math.e**(-abs(focRep-i))
         repDistanceList.append(repDistance)
-    repDistanceList = repDistanceList ** 3 # amplify the effect
+    repDistanceList = np.array(repDistanceList) ** 3 # amplify the effect
     potentialPosRepFre = repDistanceList / np.sum(repDistanceList)
     potentialPosIndex = np.random.choice(positions, 1, p=potentialPosRepFre)[0]
     for j in posInd[potentialPosIndex]:
