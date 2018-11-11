@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import os
 
 abspath = os.path.abspath(os.path.join(os.getcwd(), "../"))
-dirname = abspath + "/New_Value_From_-3_To_3/One_Dimension_GroupSize_2/"
+dirname = abspath + "/Reputation_Distance/One_Dimension_GroupSize_2/"
 for root, dirs, files in os.walk(dirname):
     for filename in files:
         print (filename)
@@ -15,7 +15,7 @@ if ".DS_Store" in files:
     files.remove(".DS_Store")
 files.sort()
 
-picFilename = dirname + files[3]
+picFilename = dirname + files[0]
 fPic = open(picFilename)
 data = []
 for line in fPic.readlines():
@@ -34,7 +34,7 @@ picData = picData.T
 print (picData)
 xlabel = range(-3, 4)
 ylabel = range(-3, 4)
-ax = sns.heatmap(picData, cmap="YlGnBu")
+ax = sns.heatmap(picData, cmap="YlGnBu", center=0.5)
 ax.set_xticklabels(xlabel)
 ax.set_yticklabels(ylabel)
 plt.xlabel("Interaction_Distance_Param " + r"$\alpha$")
