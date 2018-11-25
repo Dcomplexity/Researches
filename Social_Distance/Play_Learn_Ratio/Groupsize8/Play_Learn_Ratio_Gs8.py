@@ -201,9 +201,9 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, w, groupSize, groupB
 
 
 if __name__ == "__main__":
-    buildGroupSize = 4
+    buildGroupSize = 8
     buildGroupBase = 2
-    buildGroupLength = 9
+    buildGroupLength = 8
     buildTotalNum = buildGroupSize * (buildGroupBase ** (buildGroupLength - 1))
     (buildIndPos, buildPosInd) = buildStrucure(buildGroupSize, buildGroupBase, buildGroupLength)
     print (buildIndPos)
@@ -224,10 +224,10 @@ if __name__ == "__main__":
     buildPayoffs = np.zeros(buildTotalNum)
 
     abspath = os.path.abspath(os.path.join(os.getcwd(), "../../"))
-    dirname = abspath + "/Results/Re_Play_Learn_Ratio/Re_Groupsize_4/"
+    dirname = abspath + "/Results/Re_Play_Learn_Ratio/Re_Groupsize_8/"
     if not os.path.isdir(dirname):
         os.makedirs(dirname)
-    filename = dirname + "Re_Co_Rate_Gs_4_Dp_%s_w_%s.txt" %(buildDefectParam, buildW)
+    filename = dirname + "Re_Co_Rate_Gs_8_Dp_%s_w_%s.txt" %(buildDefectParam, buildW)
     f = open(filename, 'w')
 
     startTime = datetime.datetime.now()
