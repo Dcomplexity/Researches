@@ -126,7 +126,7 @@ def initailizeStrategy(totalNum):
     return indStrategy
 
 
-def runGame(indStrategy, alpha, beta, playNum, defectParam, w, groupSize, groupBase, groupLength, totalNum, indPos, posInd, lastPayoffs):
+def runGame(indStrategy, alpha, beta, playNum, defectParam, w, groupSize, groupBase, groupLength, totalNum, indPos, posInd, lastPayoffs, playFlag):
     """
     Run one game
     :param indStrategy: strategies of each individuals used in this round
@@ -160,7 +160,8 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, w, groupSize, groupB
             potentialPos = getPosition(groupLength, nowPosition, probPlay)
             opponentPlay[i] = pickIndividual(potentialPos, posInd)
 
-        payoffs = np.zeros(totalNum)
+        if playFlag == 0: # Last round, the individuals updated their strategy.
+            payoffs = np.zeros(totalNum)
 
         # every player plays the game with an opponent.
         for i in range(totalNum):
@@ -173,6 +174,7 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, w, groupSize, groupB
             # print (payoffsI, payoffsJ)
             payoffs[playerIndex] += payoffsI
             payoffs[opponentIndex] += payoffsJ
+        playFlag = 1
     else:
         # generate the opponent from whom learn
         for i in range(totalNum):
@@ -196,8 +198,9 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, w, groupSize, groupB
                 t2 = random.random()
                 if t2 < t1:
                     indStrategy[playerIndex] = oldIndStrategy[opponentIndex]
+        playFlag = 0
 
-    return indStrategy, payoffs
+    return indStrategy, payoffs, playFlag
 
 
 if __name__ == "__main__":
@@ -240,12 +243,14 @@ if __name__ == "__main__":
             print (buildAlpha, buildBeta)
             roundResults = np.zeros(rounds)
             for roundIndex in range(rounds):
+                buildPlayFlag = 0
                 buildIndStrategy = initailizeStrategy(buildTotalNum)
                 for i in range(runtime):
-                    (buildIndStrategy, buildPayoffs) = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildW, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd, buildPayoffs)
+                    (buildIndStrategy, buildPayoffs, buildPlayFlag) = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildW, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd, buildPayoffs, buildPlayFlag)
                 sampleStrategy = []
+                buildPlayFlag = 0
                 for i in range(sampletime):
-                    (buildIndStrategy, buildPayoffs) = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, 0.5, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd, buildPayoffs)
+                    (buildIndStrategy, buildPayoffs, buildPlayFlag) = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, 0.5, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd, buildPayoffs, buildPlayFlag)
                     sampleStrategy.append(np.mean(buildIndStrategy))
                 roundResults[roundIndex] = np.mean(sampleStrategy)
             finalResults = np.mean(roundResults)
