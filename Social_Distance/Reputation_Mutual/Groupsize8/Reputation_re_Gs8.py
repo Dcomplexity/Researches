@@ -3,6 +3,7 @@ import random
 import math
 import argparse
 import os
+import datetime
 
 class socialStructure():
     """Classify a social strucutre
@@ -75,10 +76,10 @@ def distanceProb(groupLength, groupSize, regParam):
     distanceProb = np.zeros(groupLength)
     if groupSize == 1:
         for k in range(1, groupLength):
-            distanceProb[k] = math.e ** (-regParam * (k+1))
+            distanceProb[k] = math.e ** (regParam * (k+1))
     else:
         for k in range(groupLength):
-            distanceProb[k] = math.e ** (-regParam * (k+1))
+            distanceProb[k] = math.e ** (regParam * (k+1))
     distanceProb = distanceProb / np.sum(distanceProb)
     return np.array(distanceProb)
 
@@ -220,7 +221,7 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
         playerStrategy = indStrategy[playerIndex]
         opponentIndex = opponentPlay[i]
         opponentStrategy = indStrategy[opponentIndex]
-        repFre = 1 / (1 + 10 *math.e ** -(indRep[playerIndex] * indRep[opponentIndex] * 4))
+        repFre = 1 / (1 + 10 * math.e ** -(indRep[playerIndex] * indRep[opponentIndex] * 8))
         if np.random.random() < repFre:
             (payoffsI, payoffsJ) = PDGame(playerStrategy, opponentStrategy, defectParam)
             payoffs[playerIndex] += payoffsI
@@ -266,12 +267,15 @@ if __name__ == "__main__":
     buildDefectParam = args.defectParam
 
     abspath = os.path.abspath(os.path.join(os.getcwd(), "../../"))
-    dirname = abspath + "/Results/Re_Reputation_Mutual/Re_GroupSize_8/"
+    dirname = abspath + "/Results/Re_Reputation_Mutual/Re_Groupsize_8/"
     if not os.path.isdir(dirname):
         os.makedirs(dirname)
-    filename = dirname + "Co_Rate_Gs_8_Dp_%s.txt" %buildDefectParam
+    filename = dirname + "Re_Co_Rate_Gs_8_Dp_%s.txt" %buildDefectParam
     f = open(filename, 'w')
 
+    startTime = datetime.datetime.now()
+    runtime = 50
+    sampletime = 10
     rounds = 5
     buildResults = []
     for buildAlpha in range(-3, 4):
@@ -280,14 +284,21 @@ if __name__ == "__main__":
             roundResults = np.zeros(rounds)
             for roundIndex in range(rounds):
                 buildIndStrategy = initailizeStrategy(buildTotalNum)
-                for i in range(50):
+                for i in range(runtime):
                     buildIndStrategy = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd)
-                roundResults[roundIndex] = np.mean(buildIndStrategy)
+                sampleStrategy = []
+                for i in range(sampletime):
+                    buildIndStrategy = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd)
+                    sampleStrategy.append(np.mean(buildIndStrategy))
+                roundResults[roundIndex] = np.mean(sampleStrategy)
             finalResults = np.mean(roundResults)
             buildResults.append(finalResults)
             f.write(str(buildAlpha) + '\t' + str(buildBeta) + '\t' + str(finalResults) + '\n')
     f.close()
+    endTime = datetime.datetime.now()
     print (buildResults)
+
+    print (endTime - startTime)
 
 
     # indOldStrategy = np.zeros(buildTotalNum)
