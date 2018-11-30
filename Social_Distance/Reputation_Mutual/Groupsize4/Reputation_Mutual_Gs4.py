@@ -267,7 +267,7 @@ if __name__ == "__main__":
     buildDefectParam = args.defectParam
 
     abspath = os.path.abspath(os.path.join(os.getcwd(), "../../"))
-    dirname = abspath + "/Results/Re_Reputation_re/Re_Groupsize_4/"
+    dirname = abspath + "/Results/Re_Reputation_Mutual/Re_Groupsize_4/"
     if not os.path.isdir(dirname):
         os.makedirs(dirname)
     filename = dirname + "Re_Co_Rate_Gs_4_Dp_%s.txt" %buildDefectParam
