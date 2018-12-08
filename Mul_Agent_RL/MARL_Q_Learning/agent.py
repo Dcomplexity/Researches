@@ -4,11 +4,10 @@ from Game_Env import *
 
 
 class Agent:
-    def __init__(self, alpha, gamma, delta, epsilon):
-        self.timeStep = 0
+    def __init__(self, alpha, gamma, epsilon):
+        self.time_step = 0
         self.alpha = alpha
         self.gamma = gamma
-        self.delta = delta
         self.epsilon = epsilon
         # self.s = []  # current state
         # self.s_ = []  # next state
@@ -17,7 +16,7 @@ class Agent:
         self.actions = genAction()
         self.states = genState(self.actions)
         # index =
-        self.qtable = pd.DataFrame(np.zeros((self.states.shape[0], self.actions.shape[0])), columns=self.actions)
+        self.q_table = pd.DataFrame(np.zeros((self.states.shape[0], self.actions.shape[0])), columns=self.actions)
         self.strategy = pd.DataFrame(np.zeros((self.states.shape[0], self.actions.shape[0])), columns=self.actions)
         
     def get_actions(self):
@@ -27,7 +26,7 @@ class Agent:
         return self.states
 
     def get_qtable(self):
-        return self.qtable
+        return self.q_table
 
     def get_strategy(self):
         return self.strategy
@@ -39,9 +38,9 @@ class Agent:
         """
         initial_value = 1.0 / self.actions.shape[0]
         initial_strategy = pd.Series([initial_value]*self.states.shape[0])
-        # for i in range(self.qTable.shape[0]):
-        #     for j in range(self.qTable.shape[1]):
-        #         self.qTable.iloc[i, j] = initialValue
+        # for i in range(self.q_table.shape[0]):
+        #     for j in range(self.q_table.shape[1]):
+        #         self.q_table.iloc[i, j] = initialValue
         for i in self.strategy.columns:
             self.strategy[i] = initial_strategy
 
@@ -51,8 +50,18 @@ class Agent:
         :return:
         """
         initial_qvalue = pd.Series([0.0]*self.states.shape[0])
-        for i in self.qtable.columns:
-            self.qtable[i] = initial_qvalue
+        for i in self.q_table.columns:
+            self.q_table[i] = initial_qvalue
+
+    def check_state_exist(self, s):
+        if s not in self.q_table.index:
+            # append new state to q table
+            self.q_table = self.q_table.append(
+                pd.Series(
+                    [0]*len(self.actions),
+                    index=self.q_table.columns,
+                    name=s,
+                ))
 
     def choose_action(self, ob):
         """
@@ -61,7 +70,7 @@ class Agent:
         :return:
         action: the chosen action
         """
-        s_a = self.qtable.loc[ob, :]
+        s_a = self.q_table.loc[ob, :]
         if np.random.binomial(1, self.epsilon) == 1:
             a = np.random.choice(s_a.index, size=1)[0]
         else:
@@ -69,34 +78,34 @@ class Agent:
         return a
 
     def update_qtable(self, s, a, r, s_):
+        # Q-learning methods
         self.check_state_exist(s_)
+        q_predict = self.q_table.loc[s, a]
+        q_target = r + self.gamma * self.q_table[s_, :].max()
+        self.q_table[s, a] += self.alpha * (q_target - q_predict)  # update
 
-    def check_state_exist(self, s):
-        if s not in self.qtable.index:
-            # append new state to q table
-            self.qtable = self.qtable.append(
-                pd.Series(
-                    [0]*len(self.actions),
-                    index=self.qtable.columns,
-                    name=s,
-                ))
+    def update_strategy(self):
+        pass
+
+    def update_time_step(self):
+        self.time_step += 1
 
 
 if __name__ == "__main__":
     A = Agent(0.1, 0.2, 0.3, 0.4)
     A.initial_strategy()
     A.initial_qtable()
-    qtable = A.get_qtable()
+    q_table = A.get_qtable()
     strategy = A.get_strategy()
     state_action = strategy.loc[0, :]
     print(state_action)
     print(state_action.values)
     action = np.random.choice(state_action.index, size=1, p=state_action.values)[0]
     A.check_state_exist(4)
-    qtable = A.get_qtable()
+    q_table = A.get_qtable()
     print(action)
     print(action)
-    print(qtable)
-    print(qtable.loc[1, 0])
+    print(q_table)
+    print(q_table.loc[1, 0])
 
         
