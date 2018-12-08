@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from Game_Env import *
+from game_env import *
 
 
 class Agent:
@@ -84,7 +84,7 @@ class Agent:
         q_target = r + self.gamma * self.q_table[s_, :].max()
         self.q_table[s, a] += self.alpha * (q_target - q_predict)  # update
 
-    def update_strategy(self):
+    def update_strategy(self, s, a):
         pass
 
     def update_time_step(self):
@@ -112,16 +112,46 @@ class AgentPHC(Agent):
         Agent.__init__(self, alpha, gamma, epsilon)
         self.delta = delta
         self.delta_table = pd.DataFrame(np.zeros((self.states.shape[0], self.actions.shape[0])), columns=self.actions)
-        self.delta_table_top = pd.DataFrame(np.zeros((self.states.shape[0], self.actions.shape[0])), columns=self.actions)
+        self.delta_top_table = pd.DataFrame(np.zeros((self.states.shape[0], self.actions.shape[0])), columns=self.actions)
 
     def initial_delta(self):
         """
         Initialize the delta_table to all zeros.
         :return:
         """
-        initial_delta_value = pd.Series([0.0]*self.states.shape[0])
+        initial_delta_value = pd.Series([0.0] * self.states.shape[0])
         for i in self.delta_table.columns:
             self.delta_table[i] = initial_delta_value
+        # print(self.delta_table)
+
+    def initial_delta_top(self):
+        """
+        Initialize the delta_top_table to all zeros.
+        :return:
+        """
+        initial_delta_top_value = pd.Series([0.0] * self.states.shape[0])
+        for i in self.delta_top_table.columns:
+            self.delta_top_table[i] = initial_delta_top_value
+        # print(self.delta_top_table)
+
+    def update_strategy(self, s, a):
+        s_a = self.q_table.loc[s, :]
+        print(s_a)
+        max_a = np.random.choice(s_a[s_a == np.max(s_a)].index)
+        print(max_a)
+        len_a = s_a.shape[0]
+        print(len_a)
+        for j in range(len_a):
+            self.delta_table.loc[s, j] = np.amin(np.array([self.strategy.loc[s, j], self.delta / (len_a - 1)]))
+        print(self.delta_table)
+        sum_delta = 0.0
+        for act_i in [act_j for act_j in s_a.index if act_j != max_a]:
+            self.delta_top_table.loc[s, act_i] = -self.delta_table.loc[s, act_i]
+            sum_delta += self.delta_table.loc[s, act_i]
+        self.delta_top_table.loc[s, max_a] = sum_delta
+        for j in range(len_a):
+            self.strategy.loc[s, j] += self.delta_top_table.loc[s, j]
+        print(self.strategy)
 
 if __name__ == "__main__":
     # A = Agent(0.1, 0.2, 0.3, 0.4)
@@ -139,9 +169,15 @@ if __name__ == "__main__":
     # print(action)
     # print(q_table)
     # print(q_table.loc[1, 0])
-    B = AgentFixedStrategy(0.1, 0.2, 0.4, [0.6, 0.6, 0.6, 0.6])
-    B.initial_strategy()
-    strategy = B.get_strategy()
-    print(strategy)
+    # B = AgentFixedStrategy(0.1, 0.2, 0.4, [0.6, 0.6, 0.6, 0.6])
+    # B.initial_strategy()
+    # strategy = B.get_strategy()
+    # print(strategy)
+    C = AgentPHC(0.1, 0.2, 0.3, 0.05)
+    C.initial_strategy()
+    C.initial_delta()
+    C.initial_delta_top()
+    C.update_strategy(1, 1)
+
 
         
