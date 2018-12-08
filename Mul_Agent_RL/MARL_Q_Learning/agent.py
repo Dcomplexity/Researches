@@ -25,7 +25,7 @@ class Agent:
     def get_states(self):
         return self.states
 
-    def get_qtable(self):
+    def get_q_table(self):
         return self.q_table
 
     def get_strategy(self):
@@ -70,7 +70,7 @@ class Agent:
         :return:
         action: the chosen action
         """
-        s_a = self.q_table.loc[ob, :]
+        s_a = self.strategy.loc[ob, :]
         if np.random.binomial(1, self.epsilon) == 1:
             a = np.random.choice(s_a.index, size=1)[0]
         else:
@@ -91,21 +91,57 @@ class Agent:
         self.time_step += 1
 
 
+class AgentFixedStrategy(Agent):
+    def __init__(self, alpha, gamma, epsilon, fixed_strategy):
+        Agent.__init__(self, alpha, gamma, epsilon)
+        self.strategy_vector = np.array(fixed_strategy)
+        print(self.strategy_vector)
+
+    def initial_strategy(self):
+        self.strategy[1] = pd.Series(self.strategy_vector)
+        self.strategy[0] = pd.Series(1.0 - self.strategy_vector)
+
+    def choose_action(self, ob):
+        s_a = self.strategy.loc[ob, :]
+        a = np.random.choice(s_a.index, size=1, p=s_a.values)[0]
+        return a
+
+
+class AgentPHC(Agent):
+    def __init__(self, alpha, gamma, epsilon, delta):
+        Agent.__init__(self, alpha, gamma, epsilon)
+        self.delta = delta
+        self.delta_table = pd.DataFrame(np.zeros((self.states.shape[0], self.actions.shape[0])), columns=self.actions)
+        self.delta_table_top = pd.DataFrame(np.zeros((self.states.shape[0], self.actions.shape[0])), columns=self.actions)
+
+    def initial_delta(self):
+        """
+        Initialize the delta_table to all zeros.
+        :return:
+        """
+        initial_delta_value = pd.Series([0.0]*self.states.shape[0])
+        for i in self.delta_table.columns:
+            self.delta_table[i] = initial_delta_value
+
 if __name__ == "__main__":
-    A = Agent(0.1, 0.2, 0.3, 0.4)
-    A.initial_strategy()
-    A.initial_qtable()
-    q_table = A.get_qtable()
-    strategy = A.get_strategy()
-    state_action = strategy.loc[0, :]
-    print(state_action)
-    print(state_action.values)
-    action = np.random.choice(state_action.index, size=1, p=state_action.values)[0]
-    A.check_state_exist(4)
-    q_table = A.get_qtable()
-    print(action)
-    print(action)
-    print(q_table)
-    print(q_table.loc[1, 0])
+    # A = Agent(0.1, 0.2, 0.3, 0.4)
+    # A.initial_strategy()
+    # A.initial_qtable()
+    # q_table = A.get_q_table()
+    # strategy = A.get_strategy()
+    # state_action = strategy.loc[0, :]
+    # print(state_action)
+    # print(state_action.values)
+    # action = np.random.choice(state_action.index, size=1, p=state_action.values)[0]
+    # A.check_state_exist(4)
+    # q_table = A.get_q_table()
+    # print(action)
+    # print(action)
+    # print(q_table)
+    # print(q_table.loc[1, 0])
+    B = AgentFixedStrategy(0.1, 0.2, 0.4, [0.6, 0.6, 0.6, 0.6])
+    B.initial_strategy()
+    strategy = B.get_strategy()
+    print(strategy)
 
         
