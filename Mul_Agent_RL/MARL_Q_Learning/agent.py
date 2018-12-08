@@ -64,17 +64,31 @@ class agent():
             action = np.random.choice(state_action.index, size=1, p=state_action.values)[0]
         return action
 
+    def updateQTable(self, s, a, r, s_):
+        self.check_state_exits(s_)
+
+    def checkStateExist(self, state):
+        if state not in self.qTable.index:
+            # append new state to q table
+            self.qTable = self.qTable.append(
+                pd.Series(
+                    [0]*len(self.actions),
+                    index=self.qTable.columns,
+                    name=state,
+                ))
+
 if __name__ == "__main__":
     A = agent(0.1, 0.2, 0.3, 0.4)
     A.initialStrategy()
     A.initialQTable()
     qTable = A.getQTable()
     state_action = qTable.loc[0, :]
-    print (state_action.values)
-    action = np.random.choice(state_action.index, size=1, p = state_action)[0]
-    print (action)
-    print (action)
-    print (qTable)
-    print (qTable.loc[1, 0])
+    print(state_action)
+    print(state_action.values)
+    action = np.random.choice(state_action.index, size=1, p=state_action.values)[0]
+    print(action)
+    print(action)
+    print(qTable)
+    print(qTable.loc[1, 0])
 
         
