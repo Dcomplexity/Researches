@@ -56,7 +56,8 @@ def run():
     initial_epsilon = epsilon_time(0)
     fixed_epsilon = 0.3
     agent_x_r = AgentPHC(alpha=initial_alpha, gamma=gamma, epsilon=initial_epsilon, delta=delta)
-    agent_y_r = AgentFixedStrategy(alpha=initial_alpha, gamma=gamma, epsilon=initial_epsilon, fixed_strategy=[0.0]*4)
+    agent_y_r = AgentFixedStrategy(alpha=initial_alpha, gamma=gamma, epsilon=initial_epsilon,
+                                   fixed_strategy=[11.0/13.0, 1.0/2.0, 7.0/26.0, 0.0])
 
     pool = multiprocessing.Pool(processes=4)
     agent_strategy_list = []

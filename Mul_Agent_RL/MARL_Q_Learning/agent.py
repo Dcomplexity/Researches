@@ -17,11 +17,9 @@ class Agent:
         # self.a = 0  # current Action
         self.actions = gen_actions()
         self.states = gen_states(self.actions)
-        self.index = [tuple(_) for _ in self.states]
-        self.q_table = pd.DataFrame(np.zeros((self.states.shape[0], self.actions.shape[0])),
-                                    index=pd.MultiIndex.from_tuples(self.index), columns=self.actions)
-        self.strategy = pd.DataFrame(np.zeros((self.states.shape[0], self.actions.shape[0])),
-                                     index=pd.MultiIndex.from_tuples(self.index), columns=self.actions)
+        # print(self.states)
+        self.q_table = {}
+        self.strategy = {}
 
     def get_actions(self):
         return self.actions
@@ -55,32 +53,30 @@ class Agent:
         Initialize strategy, in each states, play each action by the same probability.
         :return:
         """
-        initial_value = 1.0 / self.actions.shape[0]
-        initial_strategy = [initial_value]*self.states.shape[0]
-        # for i in range(self.q_table.shape[0]):
-        #     for j in range(self.q_table.shape[1]):
-        #         self.q_table.iloc[i, j] = initialValue
-        for i in self.strategy.columns:
-            self.strategy[i] = initial_strategy
+        len_actions = self.actions.shape[0]
+        initial_value = 1.0 / len_actions
+        for i in self.states:
+            self.strategy[i] = np.zeros(len_actions)
+            for j in range(len_actions):
+                self.strategy[i][j] = initial_value
 
     def initial_q_table(self):
         """
         Initialize the qTable to all zeros.
         :return:
         """
-        initial_qvalue = [0.0]*self.states.shape[0]
-        for i in self.q_table.columns:
-            self.q_table[i] = initial_qvalue
+        for i in self.states:
+            self.q_table[i] = np.zeros(self.actions.shape[0])
 
-    def check_state_exist(self, s):
-        if s not in self.q_table.index:
-            # append new state to q table
-            self.q_table = self.q_table.append(
-                pd.Series(
-                    [0]*len(self.actions),
-                    index=self.q_table.columns,
-                    name=s,
-                ))
+    # def check_state_exist(self, s):
+    #     if s not in self.q_table.index:
+    #         # append new state to q table
+    #         self.q_table = self.q_table.append(
+    #             pd.Series(
+    #                 [0]*len(self.actions),
+    #                 index=self.q_table.columns,
+    #                 name=s,
+    #             ))
 
     def choose_action(self, ob):
         """
@@ -89,19 +85,18 @@ class Agent:
         :return:
         action: the chosen action
         """
-        s_a = self.strategy.loc[ob, :]
         if np.random.binomial(1, self.epsilon) == 1:
-            a = np.random.choice(s_a.index, size=1)[0]
+            a = np.random.choice(self.actions, size=1)[0]
         else:
-            a = np.random.choice(s_a.index, size=1, p=s_a.values)[0]
+            a = np.random.choice(self.actions, size=1, p=self.strategy[ob])[0]
         return a
 
     def update_q_table(self, s, a, r, s_):
         # Q-learning methods
-        self.check_state_exist(s_)
-        q_predict = self.q_table.loc[s, a]
-        q_target = r + self.gamma * self.q_table.loc[s_, :].max()
-        self.q_table.loc[s, a] += self.alpha * (q_target - q_predict)  # update
+        # self.check_state_exist(s_)
+        q_predict = self.q_table[s][a]
+        q_target = r + self.gamma * np.amax(self.q_table[s_])
+        self.q_table[s][a] += self.alpha * (q_target - q_predict)  # update
 
     def update_strategy(self, s, a):
         pass
@@ -117,12 +112,19 @@ class AgentFixedStrategy(Agent):
         print(self.strategy_vector)
 
     def initial_strategy(self):
-        self.strategy[1] = self.strategy_vector
-        self.strategy[0] = 1.0 - self.strategy_vector
+        for i in self.states:
+            self.strategy[i] = np.zeros(self.actions.shape[0])
+        self.strategy[(1, 1)][0] = 1 - self.strategy_vector[0]
+        self.strategy[(1, 1)][1] = self.strategy_vector[0]
+        self.strategy[(1, 0)][0] = 1 - self.strategy_vector[1]
+        self.strategy[(1, 0)][1] = self.strategy_vector[1]
+        self.strategy[(0, 1)][0] = 1 - self.strategy_vector[2]
+        self.strategy[(0, 1)][1] = self.strategy_vector[2]
+        self.strategy[(0, 0)][0] = 1 - self.strategy_vector[3]
+        self.strategy[(0, 0)][1] = self.strategy_vector[3]
 
     def choose_action(self, ob):
-        s_a = self.strategy.loc[ob, :]
-        a = np.random.choice(s_a.index, size=1, p=s_a.values)[0]
+        a = np.random.choice(self.actions, size=1, p=self.strategy[ob])[0]
         return a
 
 
@@ -130,19 +132,16 @@ class AgentPHC(Agent):
     def __init__(self, alpha, gamma, epsilon, delta):
         Agent.__init__(self, alpha, gamma, epsilon)
         self.delta = delta
-        self.delta_table = pd.DataFrame(np.zeros((self.states.shape[0], self.actions.shape[0])),
-                                        index=pd.MultiIndex.from_tuples(self.index), columns=self.actions)
-        self.delta_top_table = pd.DataFrame(np.zeros((self.states.shape[0], self.actions.shape[0])),
-                                            index=pd.MultiIndex.from_tuples(self.index), columns=self.actions)
+        self.delta_table = {}
+        self.delta_top_table = {}
 
     def initial_delta(self):
         """
         Initialize the delta_table to all zeros.
         :return:
         """
-        initial_delta_value = [0.0] * self.states.shape[0]
-        for i in self.delta_table.columns:
-            self.delta_table[i] = initial_delta_value
+        for i in self.states:
+            self.delta_table[i] = np.zeros(self.actions.shape[0])
         # print(self.delta_table)
 
     def initial_delta_top(self):
@@ -150,39 +149,33 @@ class AgentPHC(Agent):
         Initialize the delta_top_table to all zeros.
         :return:
         """
-        initial_delta_top_value = [0.0] * self.states.shape[0]
-        for i in self.delta_top_table.columns:
-            self.delta_top_table[i] = initial_delta_top_value
-        # print(self.delta_top_table)
+        for i in self.states:
+            self.delta_top_table[i] = np.zeros(self.actions.shape[0])
 
     def update_strategy(self, s, a):
-        s_a = self.q_table.loc[s, :]
-        # print(s_a)
-        max_a = np.random.choice(s_a[s_a == np.max(s_a)].index)
-        # print(max_a)
-        len_a = s_a.shape[0]
-        # print(len_a)
+        max_a = np.random.choice(np.argwhere(self.q_table[s] == np.amax(self.q_table[s]))[0])
+        len_a = self.actions.shape[0]
         for j in range(len_a):
-            self.delta_table.loc[s, j] = np.amin(np.array([self.strategy.loc[s, j], self.delta / (len_a - 1)]))
+            self.delta_table[s][j] = np.amin(np.array([self.strategy[s][j], self.delta / (len_a - 1)]))
         # print(self.delta_table)
         sum_delta = 0.0
-        for act_i in [act_j for act_j in s_a.index if act_j != max_a]:
-            self.delta_top_table.loc[s, act_i] = -self.delta_table.loc[s, act_i]
-            sum_delta += self.delta_table.loc[s, act_i]
-        self.delta_top_table.loc[s, max_a] = sum_delta
+        for act_i in [act_j for act_j in self.actions if act_j != max_a]:
+            self.delta_top_table[s][act_i] = -self.delta_table[s][act_i]
+            sum_delta += self.delta_table[s][act_i]
+        self.delta_top_table[s][max_a] = sum_delta
         for j in range(len_a):
-            self.strategy.loc[s, j] += self.delta_top_table.loc[s, j]
+            self.strategy[s][j] += self.delta_top_table[s][j]
         # print(self.strategy)
 
 
 if __name__ == "__main__":
-    # A = Agent(0.1, 0.2, 0.3)
-    # A.initial_strategy()
-    # A.initial_q_table()
-    # q_table = A.get_q_table()
-    # strategy = A.get_strategy()
-    # print(q_table.index)
-    # print(q_table.loc[(0, 0), 1])
+    A = Agent(0.1, 0.2, 0.3)
+    A.initial_strategy()
+    A.initial_q_table()
+    q_table = A.get_q_table()
+    strategy = A.get_strategy()
+    print(q_table)
+    print(q_table[(0, 0)][1])
     # print(strategy)
     # print(state_action.values)
     # action = np.random.choice(state_action.index, size=1, p=state_action.values)[0]
@@ -192,16 +185,16 @@ if __name__ == "__main__":
     # print(action)
     # print(q_table)
     # print(q_table.loc[1, 0])
-    B = AgentFixedStrategy(0.1, 0.2, 0.4, [0.6, 0.6, 0.6, 0.6])
-    B.initial_strategy()
-    strategy = B.get_strategy()
-    print(strategy)
-    # C = AgentPHC(0.1, 0.2, 0.3, 0.05)
-    # C.initial_strategy()
-    # C.initial_delta()
-    # C.initial_delta_top()
-    # print(C.delta_table)
-    # C.update_strategy((0, 1), 1)
+    # B = AgentFixedStrategy(0.1, 0.2, 0.4, [0.6, 0.6, 0.6, 0.6])
+    # B.initial_strategy()
+    # strategy = B.get_strategy()
+    # print(strategy)
+    # # C = AgentPHC(0.1, 0.2, 0.3, 0.05)
+    # # C.initial_strategy()
+    # # C.initial_delta()
+    # # C.initial_delta_top()
+    # # print(C.delta_table)
+    # # C.update_strategy((0, 1), 1)
 
 
         

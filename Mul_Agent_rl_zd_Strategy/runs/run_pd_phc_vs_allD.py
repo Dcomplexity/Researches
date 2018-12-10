@@ -29,6 +29,6 @@ if __name__ == "__main__":
 
     myfile = open('../files/results/phc_vs_allD.txt', 'w')
     for res in agentStrategyList:
-        print (res.get()[-1])
+        print(res.get()[-1])
         myfile.write(str(res.get()[-1]) + '\n')
     myfile.close()

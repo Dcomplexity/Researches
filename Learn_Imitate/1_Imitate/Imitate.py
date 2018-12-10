@@ -78,7 +78,7 @@ def initializePopulation():
     network, totalNum = generateNetwork(structure='2d_grid')
     population = []
     for i in range(totalNum):
-        population.append(Agent(i, network[i], random.randint(0, 1)))
+        population.append(Agent(i, network[i], random.randint(0, 1)))  # notice the difference between random.randint and np.random.randint
     return population, totalNum
 
 def evolutionOneStep(population):
