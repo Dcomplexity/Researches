@@ -1,37 +1,49 @@
 import numpy as np
 from itertools import permutations
 
+
 # Generate the list of actions available in this game
-def genAction():
-    DEFECT = 0
-    COOPERATE = 1
-    actions = np.array([DEFECT, COOPERATE])
+def gen_actions():
+    defect = 0
+    cooperate = 1
+    actions = np.array([defect, cooperate])
     return actions
 
+
 # Generate the list of states available in this game
-def genState(actions):
+def gen_states(actions):
     states = []
     for _ in permutations(actions):
         states.append(_)
     for _ in actions:
-        states.append((_,_))
+        states.append((_, _))
     states.sort()
     return np.array(states)
 
+
 # Create the prisoners' dilemma game
-def PDGame(actionX, actionY):
-    T = 5.0; R = 3.0; P = 1.0; S = 0.0
-    if (actionX, actionY) == (1,1):
-        return np.array([R,R])
-    elif (actionX, actionY) == (1, 0):
-        return np.array([S, T])
-    elif (actionX, actionY) == (0, 1):
-        return np.array([T, S])
-    elif (actionX, actionY) == (0, 0):
-        return np.array([P, P])
+def pd_game(a_x, a_y):
+    t = 5.0; r = 3.0; p = 1.0; s = 0.0
+    if (a_x, a_y) == (1, 1):
+        return np.array([r, r])
+    elif (a_x, a_y) == (1, 0):
+        return np.array([s, t])
+    elif (a_x, a_y) == (0, 1):
+        return np.array([t, s])
+    elif (a_x, a_y) == (0, 0):
+        return np.array([p, p])
+
+
+def alpha_time(time_step):
+    return 1 / (10 + 0.002 * time_step)
+
+
+def epsilon_time(time_step):
+    return 0.5 / (1 + 0.0001 * time_step)
+
 
 if __name__ == "__main__":
     actionX = int(input("Please enter the action of agent X: "))
     actionY = int(input("Please enter the action of agent Y: "))
-    payoff = PDGame(actionX, actionY)
-    print (payoff)
+    payoff = pd_game(actionX, actionY)
+    print(payoff)
