@@ -1,5 +1,6 @@
 import multiprocessing
 import os
+import datetime
 
 
 from agent import *
@@ -80,8 +81,13 @@ def write_res(f, result):
 
 
 if __name__ == "__main__":
+    start_time = datetime.datetime.now()
+    print(start_time)
     res_agent_strategy_list = run()
     for res_r in res_agent_strategy_list:
         print(res_r.get()[-1])
+    end_time = datetime.datetime.now()
+    print(end_time)
+    print(end_time-start_time)
     write_res("pd_phc_vs_allD.txt", res_agent_strategy_list)
 
