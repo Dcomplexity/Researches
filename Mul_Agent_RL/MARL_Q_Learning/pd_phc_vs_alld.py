@@ -69,6 +69,10 @@ def run():
     return agent_strategy_list
 
 
+def pandas_result(result):
+    return (pd.DataFrame(result, index=[0, 1])).T
+
+
 def write_res(f, result):
     abs_path = os.getcwd()
     dir_name = abs_path + '/files/results/'
@@ -77,7 +81,7 @@ def write_res(f, result):
     file_name = dir_name + f
     my_file = open(file_name, 'w')
     for res in result:
-        my_file.write(str(res.get()[-1]) + '\n')
+        my_file.write(str(pandas_result(res.get()[-1])) + '\n')
     my_file.close()
 
 
@@ -85,8 +89,10 @@ if __name__ == "__main__":
     start_time = datetime.datetime.now()
     print(start_time)
     res_agent_strategy_list = run()
+    run_end_time = datetime.datetime.now()
+    print(run_end_time - start_time)
     for res_r in res_agent_strategy_list:
-        print(res_r.get()[-1])
+        print(pandas_result(res_r.get()[-1]))
     end_time = datetime.datetime.now()
     print(end_time)
     print(end_time-start_time)
