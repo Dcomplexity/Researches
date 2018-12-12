@@ -85,7 +85,7 @@ def evolution_one_step(popu, total_num, edges, all_except_self, b):
         popu[i].set_ostrategy()
     # Update strategy by imitating others' strategy
     for i in range(total_num):
-        j = random.choice(all_except_self[i])
+        j = random.choice(popu[i].get_link())
         popu[i].imitate(popu[j])
     return popu
 

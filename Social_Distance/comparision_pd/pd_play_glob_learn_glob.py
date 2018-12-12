@@ -76,7 +76,7 @@ def evolution_one_step(popu, total_num, edges, all_except_self, b):
     for i in range(total_num):
         popu[i].set_payoffs(0)
     for i in range(total_num):
-        j = random.choice(popu[i].get_link())
+        j = random.choice(all_except_self[i])
         r_i, r_j = pd_game(popu[i].get_strategy(), popu[j].get_strategy(), b)
         popu[i].add_payoffs(r_i)
         popu[j].add_payoffs(r_j)

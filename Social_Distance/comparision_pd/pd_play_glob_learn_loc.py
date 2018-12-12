@@ -57,14 +57,17 @@ class Agent:
 
 def initialize_population():
     network, total_num, edges = generate_network(structure='2d_grid')
+    all_except_self = [list(range(total_num)) for _ in range(total_num)]
+    for i in range(total_num):
+        all_except_self[i].pop(i)
     popu = []
     for i in range(total_num):
         # notice the difference between random.randint and np.random.randint
         popu.append(Agent(i, network[i], random.randint(0, 1)))
-    return popu, network, total_num, edges
+    return popu, network, total_num, edges, all_except_self
 
 
-def evolution_one_step(popu, total_num, edges, b):
+def evolution_one_step(popu, total_num, edges, all_except_self, b):
     # Play the game
     # for i in range(total_num):
     #     popu[i].set_payoffs(0)
@@ -72,9 +75,8 @@ def evolution_one_step(popu, total_num, edges, b):
     #         popu[i].play_game(popu[j], b)
     for i in range(total_num):
         popu[i].set_payoffs(0)
-    for edge in edges:
-        i = edge[0]
-        j = edge[1]
+    for i in range(total_num):
+        j = random.choice(all_except_self[i])
         r_i, r_j = pd_game(popu[i].get_strategy(), popu[j].get_strategy(), b)
         popu[i].add_payoffs(r_i)
         popu[j].add_payoffs(r_j)
@@ -90,18 +92,18 @@ def evolution_one_step(popu, total_num, edges, b):
 
 def run(b):
     run_time = 100
-    popu, network, total_num, edges = initialize_population()
+    popu, network, total_num, edges, all_except_self = initialize_population()
     for _ in range(run_time):
-        popu = evolution_one_step(popu, total_num, edges, b)
-    return popu, network, total_num, edges,
+        popu = evolution_one_step(popu, total_num, edges, all_except_self, b)
+    return popu, network, total_num, edges, all_except_self
 
 
-def evaluation(popu, edges, b):
+def evaluation(popu, edges, all_except_self, b):
     sample_time = 20
     sample_strategy = []
     total_num = len(popu)
     for _ in range(sample_time):
-        popu = evolution_one_step(popu, total_num, edges, b)
+        popu = evolution_one_step(popu, total_num, edges, all_except_self, b)
         strategy = []
         for i in range(total_num):
             strategy.append(popu[i].get_strategy())
@@ -110,14 +112,14 @@ def evaluation(popu, edges, b):
 
 
 if __name__ == "__main__":
-    b_v = 2.0
+    b_v = 1.2
     initializations = 10
     result = []
     startTime = datetime.datetime.now()
     print(startTime)
     for _ in range(initializations):
-        population, network_v, total_number_v, edges_v = run(b_v)
-        result.append(evaluation(population, edges_v, b_v))
+        population, network_v, total_number_v, edges_v, all_except_self_v = run(b_v)
+        result.append(evaluation(population, edges_v, all_except_self_v, b_v))
     endTime = datetime.datetime.now()
     print(endTime)
     print(endTime - startTime)
