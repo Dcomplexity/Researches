@@ -13,3 +13,13 @@ $$
 rep\_fre < \frac{1}{1 + 100 * e^{-(rep_i * rep_j) * 8}}
 $$
 Such reputation system can promote cooperation .
+
+# 3_pgg_original
+
+# 4_pgg_reputation
+
+self_host, reputation
+
+# 4_pgg_reputation
+
+add_other, reputation
