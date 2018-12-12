@@ -15,6 +15,12 @@ def pd_game(strategy0, strategy1, b):
         return "Error"
 
 
+def pgg_game(strategy, r):
+    agent_num = len(strategy)
+    payoffs = np.array([np.sum(strategy)*r/agent_num for _ in range(agent_num)]) - np.array(strategy)
+    return payoffs
+
+
 def generate_network(structure, xdim=100, ydim=100):
     if structure == "2d_grid":
         g_network = nx.grid_2d_graph(xdim, ydim, periodic=True)
@@ -28,3 +34,8 @@ def generate_network(structure, xdim=100, ydim=100):
             for j in range(len(adj_link[i])):
                 g_edge.add_edge(i, adj_link[i][j])
     return np.array(adj_link), population_num, np.array(g_edge.edges())
+
+
+if __name__ == "__main__":
+    payoffs = pgg_game([1, 1, 1, 1, 1], 3)
+    print(payoffs)
