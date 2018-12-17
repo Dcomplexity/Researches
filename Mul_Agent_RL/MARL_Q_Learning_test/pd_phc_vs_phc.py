@@ -58,7 +58,7 @@ def play_one_game(agent_x=AgentPHC, agent_y=AgentPHC):
         agent_y.update_alpha()
         agent_x.update_epsilon()  # epsilon (choose action randomly) change with time
         agent_y.update_epsilon()
-
+        ep += 1
     return s_history
 
 
