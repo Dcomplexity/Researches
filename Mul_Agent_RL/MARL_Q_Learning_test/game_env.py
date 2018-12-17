@@ -23,7 +23,10 @@ def gen_states(actions):
 
 # Create the prisoners' dilemma game
 def pd_game(a_x, a_y):
-    t = 5.0; r = 3.0; p = 1.0; s = 0.0
+    t = 5.0
+    r = 3.0
+    p = 1.0
+    s = 0.0
     if (a_x, a_y) == (1, 1):
         return r, r
     elif (a_x, a_y) == (1, 0):

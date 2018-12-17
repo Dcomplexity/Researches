@@ -11,7 +11,9 @@ states = gen_states(actions)
 
 
 def game_env_feedback(a_x, a_y):
-    r_x, r_y = pd_game(a_x, a_y)
+    a_x = a_x
+    a_y = a_y
+    [r_x, r_y] = pd_game(a_x, a_y)
     s_ = (a_x, a_y)
     return r_x, r_y, s_
 
