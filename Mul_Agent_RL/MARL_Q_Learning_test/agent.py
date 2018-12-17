@@ -3,12 +3,12 @@ import pandas as pd
 from game_env import *
 
 
-class Agent:
-    def __init__(self, gamma):
+class Agent(object):
+    def __init__(self, alpha, gamma, epsilon):
         self.time_step = 0
-        self.alpha = alpha_time(self.time_step)
+        self.alpha = alpha(self.time_step)
         self.gamma = gamma
-        self.epsilon = epsilon_time(self.time_step)
+        self.epsilon = epsilon(self.time_step)
         self.cur_s = ()
         self.next_s = ()
         self.cur_a = 0
@@ -58,12 +58,11 @@ class Agent:
         Initialize strategy, in each states, play each action by the same probability.
         :return:
         """
-        len_actions = self.actions.shape[0]
-        initial_value = 1.0 / len_actions
         for i in self.states:
-            self.strategy[i] = np.zeros(len_actions)
-            for j in range(len_actions):
-                self.strategy[i][j] = initial_value
+            self.strategy[i] = np.zeros(self.actions.shape[0])
+            len_a = self.actions.shape[0]
+            for j in range(self.actions.shape[0]):
+                self.strategy[i][j] = 1.0 / len_a
 
     def initial_q_table(self):
         """
@@ -89,9 +88,8 @@ class Agent:
     def update_q_table(self):
         # Q-learning methods
         # self.check_state_exist(s_)
-        q_predict = self.q_table[self.cur_s][self.cur_a]
-        q_target = self.reward + self.gamma * np.amax(self.q_table[self.next_s])
-        self.q_table[self.cur_s][self.cur_a] += self.alpha * (q_target - q_predict)  # update
+        self.q_table[self.cur_s][self.cur_a] = (1-self.alpha)*self.q_table[self.cur_s][self.cur_a] \
+                + self.alpha * (self.reward + self.gamma * np.amax(self.q_table[self.next_s]))  # update
 
     def update_strategy(self):
         pass

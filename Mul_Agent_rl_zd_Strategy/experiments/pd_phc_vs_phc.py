@@ -12,8 +12,6 @@ states = generateDCStates(actions)
 def oneGame(actionX, actionY):
     actionX = actionX
     actionY = actionY
-    rewardX = 0
-    rewardY = 0
     [rewardX, rewardY] = PDGame(actionX, actionY)
     nextState = (actionX, actionY)
     return rewardX, rewardY, nextState
