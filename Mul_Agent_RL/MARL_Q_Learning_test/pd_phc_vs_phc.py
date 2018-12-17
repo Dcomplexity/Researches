@@ -42,7 +42,7 @@ def play_one_game(agent_x=AgentPHC, agent_y=AgentPHC):
             action_x = np.random.choice(actions)
             action_y = np.random.choice(actions)
             cur_state = (action_x, action_y)
-        s_history.append([agent_x.get_strategy().copy(), agent_y.get_strategy().copy()])
+        s_history.append((np.copy(agent_x.get_strategy()), np.copy(agent_y.get_strategy())))
         # a_x = agent_x.choose_action(s)
         # a_y = agent_y.choose_action(s)
         agent_x.set_cur_state(cur_state)
@@ -113,9 +113,9 @@ if __name__ == "__main__":
     run_end_time = datetime.datetime.now()
     print(run_end_time - start_time)
     for res_r in agent_strategy_list:
-        print(pandas_result(res_r.get()[-1]))
+        print(res_r.get()[-1])
     end_time = datetime.datetime.now()
     print(end_time)
     print(end_time-start_time)
-    write_res("pd_phc_vs_phc.txt", agent_strategy_list)
+    # write_res("pd_phc_vs_phc.txt", agent_strategy_list)
 

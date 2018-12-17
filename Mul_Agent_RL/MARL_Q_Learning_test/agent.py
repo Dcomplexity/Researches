@@ -6,9 +6,9 @@ from game_env import *
 class Agent(object):
     def __init__(self, alpha, gamma, epsilon):
         self.time_step = 0
-        self.alpha = alpha(self.time_step)
+        self.alpha = alpha_time(self.time_step)
         self.gamma = gamma
-        self.epsilon = epsilon(self.time_step)
+        self.epsilon = epsilon_time(self.time_step)
         self.cur_s = ()
         self.next_s = ()
         self.cur_a = 0
