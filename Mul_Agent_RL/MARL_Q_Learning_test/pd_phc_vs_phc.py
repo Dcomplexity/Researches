@@ -6,8 +6,7 @@ import datetime
 from agent import *
 from game_env import *
 
-actions = gen_actions()
-states = gen_states(actions)
+
 
 def game_env_feedback(a_x, a_y):
     r_x, r_y = pd_game(a_x, a_y)
@@ -17,6 +16,8 @@ def game_env_feedback(a_x, a_y):
 
 def play_one_game(agent_x=AgentPHC, agent_y=AgentPHC):
     # s = np.random.randint(0, 2, (2, 1))
+    actions = gen_actions()
+    states = gen_states(actions)
     ep = 0
     agent_x.initial_strategy()
     agent_x.initial_q_table()
@@ -61,6 +62,7 @@ def play_one_game(agent_x=AgentPHC, agent_y=AgentPHC):
 
         ep += 1
         cur_state = next_state
+
     return s_history
 
 
