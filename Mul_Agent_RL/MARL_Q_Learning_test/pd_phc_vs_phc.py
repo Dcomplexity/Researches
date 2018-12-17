@@ -22,7 +22,9 @@ def play_one_game(agent_x=AgentPHC, agent_y=AgentPHC):
     agent_x = agent_x
     agent_y = agent_y
     # s = np.random.randint(0, 2, (2, 1))
-
+    action_x = np.random.choice(actions)
+    action_y = np.random.choice(actions)
+    cur_state = (action_x, action_y)
     ep = 0
     agent_x.initial_strategy()
     agent_x.initial_q_table()
@@ -78,22 +80,6 @@ def run_game(agent_x=AgentPHC, agent_y=AgentPHC):
     return run_game_result
 
 
-def run():
-    gamma = 0.99
-    delta = 0.0001
-    agent_x_r = AgentPHC(alpha=alpha_time, gamma=gamma, epsilon=epsilon_time, delta=delta)
-    agent_y_r = AgentPHC(alpha=alpha_time, gamma=gamma, epsilon=epsilon_time, delta=delta)
-
-    pool = multiprocessing.Pool(processes=4)
-    agent_strategy_list = []
-    for _ in range(4):
-        agent_strategy_list.append(pool.apply_async(run_game, (agent_x_r, agent_y_r)))
-    pool.close()
-    pool.join()
-
-    return agent_strategy_list
-
-
 def pandas_result(result):
     return (pd.DataFrame(result, index=['x', 'y'])).T
 
@@ -113,13 +99,23 @@ def write_res(f, result):
 if __name__ == "__main__":
     start_time = datetime.datetime.now()
     print(start_time)
-    res_agent_strategy_list = run()
+    gamma = 0.99
+    delta = 0.0001
+    agent_x_r = AgentPHC(alpha=alpha_time, gamma=gamma, epsilon=epsilon_time, delta=delta)
+    agent_y_r = AgentPHC(alpha=alpha_time, gamma=gamma, epsilon=epsilon_time, delta=delta)
+
+    pool = multiprocessing.Pool(processes=4)
+    agent_strategy_list = []
+    for _ in range(4):
+        agent_strategy_list.append(pool.apply_async(run_game, (agent_x_r, agent_y_r)))
+    pool.close()
+    pool.join()
     run_end_time = datetime.datetime.now()
     print(run_end_time - start_time)
-    for res_r in res_agent_strategy_list:
+    for res_r in agent_strategy_list:
         print(pandas_result(res_r.get()[-1]))
     end_time = datetime.datetime.now()
     print(end_time)
     print(end_time-start_time)
-    write_res("pd_phc_vs_phc.txt", res_agent_strategy_list)
+    write_res("pd_phc_vs_phc.txt", agent_strategy_list)
 
