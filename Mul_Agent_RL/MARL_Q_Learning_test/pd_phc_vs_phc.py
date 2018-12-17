@@ -15,6 +15,8 @@ def game_env_feedback(a_x, a_y):
 
 
 def play_one_game(agent_x=AgentPHC, agent_y=AgentPHC):
+    agent_x = agent_x
+    agent_y = agent_y
     # s = np.random.randint(0, 2, (2, 1))
     actions = gen_actions()
     states = gen_states(actions)
@@ -67,6 +69,8 @@ def play_one_game(agent_x=AgentPHC, agent_y=AgentPHC):
 
 
 def run_game(agent_x=AgentPHC, agent_y=AgentPHC):
+    agent_x = agent_x
+    agent_y = agent_y
     run_game_result = play_one_game(agent_x, agent_y)
     return run_game_result
 
