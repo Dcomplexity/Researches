@@ -4,11 +4,15 @@ from game_env import *
 
 
 class Agent:
-    def __init__(self, alpha, gamma, epsilon):
+    def __init__(self, gamma):
         self.time_step = 0
-        self.alpha = alpha
+        self.alpha = alpha_time(self.time_step)
         self.gamma = gamma
-        self.epsilon = epsilon
+        self.epsilon = epsilon_time(self.time_step)
+        self.cur_s = []
+        self.next_s = []
+        self.cur_a = 0
+        self.reward = 0
         # self.s = []  # current state
         # self.s_ = []  # next state
         # self.r = 0  # reward
@@ -19,11 +23,11 @@ class Agent:
         self.q_table = {}
         self.strategy = {}
 
-    def get_actions(self):
-        return self.actions
+    def get_action(self):
+        return self.cur_a
 
-    def get_states(self):
-        return self.states
+    def get_state(self):
+        return self.cur_s
 
     def get_q_table(self):
         return self.q_table
@@ -31,20 +35,23 @@ class Agent:
     def get_strategy(self):
         return self.strategy
 
-    def set_time_step(self, t):
-        self.time_step = t
+    def set_cur_state(self, s):
+        self.cur_s = s
 
-    def set_alpha(self, t, new_alpha=None):
-        if new_alpha:
-            self.alpha = new_alpha
-        else:
-            self.alpha = alpha_time(t)
+    def set_next_state(self, s_):
+        self.next_s = s_
 
-    def set_epsilon(self, t, new_epsilon=None):
-        if new_epsilon:
-            self.epsilon = new_epsilon
-        else:
-            self.epsilon = epsilon_time(t)
+    def set_reward(self, r):
+        self.reward = r
+
+    def update_time_step(self):
+        self.time_step += 1
+
+    def update_alpha(self):
+        self.alpha = alpha_time(self.time_step)
+
+    def update_epsilon(self):
+        self.epsilon = epsilon_time(self.time_step)
 
     def initial_strategy(self):
         """
@@ -79,14 +86,14 @@ class Agent:
     def choose_action(self, ob):
         pass
 
-    def update_q_table(self, s, a, r, s_):
+    def update_q_table(self):
         # Q-learning methods
         # self.check_state_exist(s_)
-        q_predict = self.q_table[s][a]
-        q_target = r + self.gamma * np.amax(self.q_table[s_])
-        self.q_table[s][a] += self.alpha * (q_target - q_predict)  # update
+        q_predict = self.q_table[self.cur_s][self.cur_a]
+        q_target = self.reward + self.gamma * np.amax(self.q_table[self.next_s])
+        self.q_table[self.cur_s][self.cur_a] += self.alpha * (q_target - q_predict)  # update
 
-    def update_strategy(self, s, a):
+    def update_strategy(self):
         pass
 
     def update_time_step(self):
@@ -94,8 +101,8 @@ class Agent:
 
 
 class AgentFixedStrategy(Agent):
-    def __init__(self, alpha, gamma, epsilon, fixed_strategy):
-        Agent.__init__(self, alpha, gamma, epsilon)
+    def __init__(self, gamma, fixed_strategy):
+        Agent.__init__(self, gamma)
         self.strategy_vector = np.array(fixed_strategy)
         print(self.strategy_vector)
 
@@ -111,25 +118,25 @@ class AgentFixedStrategy(Agent):
         self.strategy[(0, 0)][0] = 1 - self.strategy_vector[3]
         self.strategy[(0, 0)][1] = self.strategy_vector[3]
 
-    def choose_action(self, ob):
-        a = np.random.choice(self.actions, size=1, p=self.strategy[ob])[0]
+    def choose_action(self):
+        a = np.random.choice(self.actions, size=1, p=self.strategy[self.cur_s])[0]
         return a
 
 
 class AgentQ(Agent):
-    def __init__(self, alpha, gamma, epsilon):
-        Agent.__init__(self, alpha, gamma, epsilon)
+    def __init__(self, gamma):
+        Agent.__init__(self, gamma)
 
-    def choose_action(self, ob):
-        a_v = np.array(self.q_table[ob])
+    def choose_action(self):
+        a_v = np.array(self.q_table[self.cur_s])
         alt_actions = np.where(a_v == np.amax(a_v))[0]
         a = np.random.choice(alt_actions)
         return a
 
 
 class AgentPHC(Agent):
-    def __init__(self, alpha, gamma, epsilon, delta):
-        Agent.__init__(self, alpha, gamma, epsilon)
+    def __init__(self, gamma, delta):
+        Agent.__init__(self, gamma)
         self.delta = delta
         self.delta_table = {}
         self.delta_top_table = {}
@@ -151,7 +158,7 @@ class AgentPHC(Agent):
         for i in self.states:
             self.delta_top_table[i] = np.zeros(self.actions.shape[0])
 
-    def choose_action(self, ob):
+    def choose_action(self):
         """
         Choose action epsilon-greedy
         :param ob: The states agent's observation
@@ -159,24 +166,23 @@ class AgentPHC(Agent):
         action: the chosen action
         """
         if np.random.binomial(1, self.epsilon) == 1:
-            a = np.random.choice(self.actions, size=1)[0]
+            self.cur_a = np.random.choice(self.actions, size=1)[0]
         else:
-            a = np.random.choice(self.actions, size=1, p=self.strategy[ob])[0]
-        return a
+            self.cur_a = np.random.choice(self.actions, size=1, p=self.strategy[self.cur_s])[0]
 
-    def update_strategy(self, s):
-        max_a = np.random.choice(np.argwhere(self.q_table[s] == np.amax(self.q_table[s]))[0])
+    def update_strategy(self):
+        max_a = np.random.choice(np.argwhere(self.q_table[self.cur_s] == np.amax(self.q_table[self.cur_s]))[0])
         len_a = self.actions.shape[0]
         for j in range(len_a):
-            self.delta_table[s][j] = np.amin(np.array([self.strategy[s][j], self.delta / (len_a - 1)]))
+            self.delta_table[self.cur_s][j] = np.amin(np.array([self.strategy[self.cur_s][j], self.delta / (len_a - 1)]))
         # print(self.delta_table)
         sum_delta = 0.0
         for act_i in [act_j for act_j in self.actions if act_j != max_a]:
-            self.delta_top_table[s][act_i] = -self.delta_table[s][act_i]
-            sum_delta += self.delta_table[s][act_i]
-        self.delta_top_table[s][max_a] = sum_delta
+            self.delta_top_table[self.cur_s][act_i] = -self.delta_table[self.cur_s][act_i]
+            sum_delta += self.delta_table[self.cur_s][act_i]
+        self.delta_top_table[self.cur_s][max_a] = sum_delta
         for j in range(len_a):
-            self.strategy[s][j] += self.delta_top_table[s][j]
+            self.strategy[self.cur_s][j] += self.delta_top_table[self.cur_s][j]
         # print(self.strategy)
 
 

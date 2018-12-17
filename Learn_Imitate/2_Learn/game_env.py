@@ -4,7 +4,7 @@ from itertools import permutations
 
 
 # Generate the list of actions available in this game
-def get_actions():
+def gen_actions():
     defect = 0
     cooperate = 1
     actions = np.array([defect, cooperate])

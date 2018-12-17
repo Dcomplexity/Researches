@@ -13,11 +13,23 @@ class Agent:
         self.alpha = alpha
         self.gamma = gamma
         self.epsilon = epsilon
+        self.actions = gen_actions()
+        self.states = gen_states(self.actions)
+        self.q_table = {}
         self.agent_id = agent_id
         self.link = link
         self.strategy = strategy
         self.ostrategy = strategy
         self.payoffs = 0
+
+    def get_actions(self):
+        return self.actions
+
+    def get_states(self):
+        return self.states
+
+    def get_q_table(self):
+        return self.q_table
 
     def get_id(self):
         return self.agent_id
@@ -43,36 +55,61 @@ class Agent:
     def set_payoffs(self, p):
         self.payoffs = p
 
-    def learn(self):
+    def set_time_step(self, t):
+        self.time_step = t
 
-# class Tester:
-#     def __init__(self, a, b):
-#         self.a = a
-#         self.b = b
-#
-#     def get_a(self):
-#         return self.a
-#
-#     def get_b(self):
-#         return self.b
-#
-#     def set_a(self, o_a):
-#         self.a = o_a
-#
-#     def set_b(self, o_b):
-#         self.b = o_b
-#
-#     def set_a_b(self):
-#         self.a = self.b
-#
-#
-# if __name__ == "__main__":
-#     test_v = Tester(1, 2)
-#     a_v = test_v.get_a()
-#     b_v = test_v.get_b()
-#     test_v.set_a_b()
-#     test_v.set_b(3)
-#     b_v = test_v.get_b()
-#     a_v = test_v.get_a()
-#     print(a_v, b_v)
+    def set_alpha(self, t, new_alpha=None):
+        if new_alpha:
+            self.alpha = new_alpha
+        else:
+            self.alpha = alpha_time(t)
 
+    def set_epsilon(self, t, new_epsilon=None):
+        if new_epsilon:
+            self.epsilon = new_epsilon
+        else:
+            self.epsilon = epsilon_time(t)
+
+    def initial_strategy(self):
+        """
+        Initialize strategy, in each states, play each action by the same probability.
+        :return:
+        """
+        len_actions = self.actions.shape[0]
+        initial_value = 1.0 / len_actions
+        for i in self.states:
+            self.strategy[i] = np.zeros(len_actions)
+            for j in range(len_actions):
+                self.strategy[i][j] = initial_value
+
+    def initial_q_table(self):
+        """
+        Initialize the qTable to all zeros
+        :return:
+        """
+        for i in self.states:
+            self.q_table[i] = np.zeros(self.actions.shape[0])
+
+    def choose_action(self, ob):
+        """
+        Choose action epsilon-greedy
+        :param ob: The states agent's observation
+        :return:
+        action: the chose action
+        """
+        if np.random.binomial(1, self.epsilon) == 1:
+            a = np.random.choice(self.actions, size=1)[0]
+        else:
+            a = np.random.choice(self.actions, size=1, p=self.strategy[ob])[0]
+        return a
+
+    def update_q_table(self, s, a, r, s_):
+        q_predict = self.q_table[s][a]
+        q_target = r + self.gamma * np.amax(self.qtable[s_])
+        self.q_table[s][a] += self.alpha * (q_target - q_predict)  # update
+
+    def update_strategy(self, s, a):
+        pass
+
+    def update_time_step(self):
+        self.time_step += 1

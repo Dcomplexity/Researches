@@ -50,7 +50,7 @@ def playOneGame(agentX=agentPHC, agentY=agentPHC):
 
         agentX.setCurrentState(currentState)
         agentY.setCurrentState(currentState)
-        agentX.chooseSmartAction()
+        agentX.chooseAction()
         agentY.chooseAction()
         agentXAction = agentX.getAction()
         agentYAction = agentY.getAction()
