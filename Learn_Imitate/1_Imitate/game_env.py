@@ -24,3 +24,8 @@ def generate_network(structure, xdim=100, ydim=100):
             adj_link.append(np.where(adj_array[i] == 1)[0])
         population_num = xdim * ydim
     return np.array(adj_link), population_num
+
+
+if __name__ == "__main__":
+    adj_link_v, p_num_v = generate_network(structure='2d_grid')
+    print(adj_link_v)
