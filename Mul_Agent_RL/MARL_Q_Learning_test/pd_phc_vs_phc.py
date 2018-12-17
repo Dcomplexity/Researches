@@ -6,6 +6,8 @@ import datetime
 from agent import *
 from game_env import *
 
+actions = gen_actions()
+states = gen_states(actions)
 
 def game_env_feedback(a_x, a_y):
     r_x, r_y = pd_game(a_x, a_y)
@@ -14,8 +16,6 @@ def game_env_feedback(a_x, a_y):
 
 
 def play_one_game(agent_x=AgentPHC, agent_y=AgentPHC):
-    actions = gen_actions()
-    states = gen_states(actions)
     # s = np.random.randint(0, 2, (2, 1))
     ep = 0
     agent_x.initial_strategy()
@@ -54,11 +54,13 @@ def play_one_game(agent_x=AgentPHC, agent_y=AgentPHC):
         agent_y.update_strategy()
         agent_x.update_time_step()
         agent_y.update_time_step()
-        agent_x.update_alpha()  # alpha (learning rate) change with time
-        agent_y.update_alpha()
         agent_x.update_epsilon()  # epsilon (choose action randomly) change with time
         agent_y.update_epsilon()
+        agent_x.update_alpha()  # alpha (learning rate) change with time
+        agent_y.update_alpha()
+
         ep += 1
+        cur_state = next_state
     return s_history
 
 
@@ -69,10 +71,7 @@ def run_game(agent_x=AgentPHC, agent_y=AgentPHC):
 
 def run():
     gamma = 0.99
-    delta = 0.001
-    initial_alpha = alpha_time(0)
-    initial_epsilon = epsilon_time(0)
-    fixed_epsilon = 0.3
+    delta = 0.0001
     agent_x_r = AgentPHC(gamma=gamma, delta=delta)
     agent_y_r = AgentPHC(gamma=gamma, delta=delta)
 

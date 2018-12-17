@@ -9,8 +9,8 @@ class Agent:
         self.alpha = alpha_time(self.time_step)
         self.gamma = gamma
         self.epsilon = epsilon_time(self.time_step)
-        self.cur_s = []
-        self.next_s = []
+        self.cur_s = ()
+        self.next_s = ()
         self.cur_a = 0
         self.reward = 0
         # self.s = []  # current state
