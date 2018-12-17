@@ -133,8 +133,8 @@ class AgentQ(Agent):
 
 
 class AgentPHC(Agent):
-    def __init__(self, gamma, delta):
-        Agent.__init__(self, gamma)
+    def __init__(self, alpha, gamma, epsilon, delta):
+        Agent.__init__(self, alpha, gamma, epsilon)
         self.delta = delta
         self.delta_table = {}
         self.delta_top_table = {}
