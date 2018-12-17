@@ -66,3 +66,4 @@ class agentPHC(agent):
         self.deltaStaActTop[self.curSta][maxAction] = sumDeltaStaAct
         for j in range(self.DCActs.shape[0]):
             self.strategy[self.curSta][j] += self.deltaStaActTop[self.curSta][j]
+        print(self.deltaStaActTop)

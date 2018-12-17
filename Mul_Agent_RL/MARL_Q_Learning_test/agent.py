@@ -171,7 +171,7 @@ class AgentPHC(Agent):
     def update_strategy(self):
         max_a = np.random.choice(np.argwhere(self.q_table[self.cur_s] == np.amax(self.q_table[self.cur_s]))[0])
         len_a = self.actions.shape[0]
-        for j in range(len_a):
+        for j in range(self.actions.shape[0]):
             self.delta_table[self.cur_s][j] = np.amin(np.array([self.strategy[self.cur_s][j], self.delta / (len_a - 1)]))
         # print(self.delta_table)
         sum_delta = 0.0
@@ -179,9 +179,8 @@ class AgentPHC(Agent):
             self.delta_top_table[self.cur_s][act_i] = -self.delta_table[self.cur_s][act_i]
             sum_delta += self.delta_table[self.cur_s][act_i]
         self.delta_top_table[self.cur_s][max_a] = sum_delta
-        for j in range(len_a):
+        for j in range(self.actions.shape[0]):
             self.strategy[self.cur_s][j] += self.delta_top_table[self.cur_s][j]
-        # print(self.strategy)
 
 
 if __name__ == "__main__":
