@@ -99,10 +99,10 @@ def write_res(f, result):
 if __name__ == "__main__":
     start_time = datetime.datetime.now()
     print(start_time)
-    gamma = 0.99
-    delta = 0.0001
-    agent_x_r = AgentPHC(alpha=alpha_time, gamma=gamma, epsilon=epsilon_time, delta=delta)
-    agent_y_r = AgentPHC(alpha=alpha_time, gamma=gamma, epsilon=epsilon_time, delta=delta)
+    gamma_v = 0.99
+    delta_v = 0.0001
+    agent_x_r = AgentPHC(alpha=alpha_time, gamma=gamma_v, epsilon=epsilon_time, delta=delta_v)
+    agent_y_r = AgentPHC(alpha=alpha_time, gamma=gamma_v, epsilon=epsilon_time, delta=delta_v)
 
     pool = multiprocessing.Pool(processes=4)
     agent_strategy_list = []
