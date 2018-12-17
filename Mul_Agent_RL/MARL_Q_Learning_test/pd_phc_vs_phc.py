@@ -79,8 +79,8 @@ def run_game(agent_x=AgentPHC, agent_y=AgentPHC):
 def run():
     gamma = 0.99
     delta = 0.0001
-    agent_x_r = AgentPHC(gamma=gamma, delta=delta)
-    agent_y_r = AgentPHC(gamma=gamma, delta=delta)
+    agent_x_r = AgentPHC(alpha=alpha_time, gamma=gamma, epsilon=epsilon_time, delta=delta)
+    agent_y_r = AgentPHC(alpha=alpha_time, gamma=gamma, epsilon=epsilon_time, delta=delta)
 
     pool = multiprocessing.Pool(processes=4)
     agent_strategy_list = []
