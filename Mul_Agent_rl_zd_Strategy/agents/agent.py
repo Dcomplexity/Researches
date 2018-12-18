@@ -60,8 +60,15 @@ class agent(object):
     def updateTimeStep(self):
         self.timeStep += 1
 
+    # def updateEpsilon(self):
+        # self.EPSILON = epsilon(self.timeStep)  # Notice the epsilon, in the former settings, I make a mistake, I write
+                                               # the epsilon as EPSILON, which means the epsilon does not change.
+                                               # It remains as 0.5
     def updateEpsilon(self):
-        self.EPSILON = epsilon(self.timeStep)
+        # In phc vs phc experiment, the result will not converge to defect vs defect
+        # Because the eploration rate is small, many states will not be met.
+        self.epsilon = epsilon(self.timeStep)
+        # self.epsilon = 0.5
 
     def updateAlpha(self): # if you want to update alpha, you have to execute this fucntion
                            # just update timeStep will not change the alpha automatically.

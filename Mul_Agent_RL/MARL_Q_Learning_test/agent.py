@@ -51,7 +51,8 @@ class Agent(object):
         self.alpha = alpha_time(self.time_step)
 
     def update_epsilon(self):
-        self.epsilon = epsilon_time(self.time_step)
+        # self.epsilon = epsilon_time(self.time_step)
+        self.epsilon = 0.5
 
     def initial_strategy(self):
         """

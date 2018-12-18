@@ -50,6 +50,7 @@ def play_one_game(agent_x=AgentPHC, agent_y=AgentPHC):
         s = s_
     return s_history
 
+
 def run_game(agent_x=AgentPHC, agent_y=AgentPHC):
     run_game_result = play_one_game(agent_x, agent_y)
     return run_game_result
