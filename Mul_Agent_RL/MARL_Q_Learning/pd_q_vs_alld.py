@@ -53,7 +53,7 @@ def run():
     fixed_epsilon = 0.3
     agent_x_r = AgentQ(alpha=initial_alpha, gamma=gamma, epsilon=initial_epsilon)
     agent_y_r = AgentFixedStrategy(alpha=initial_alpha, gamma=gamma, epsilon=initial_epsilon,
-                                   fixed_strategy=[11.0/13.0, 1.0/2.0, 7.0/26.0, 0.0])
+                                   fixed_strategy=[0.0, 0.0, 0.0, 0.0])
 
     pool = multiprocessing.Pool(processes=4)
     agent_q_table_list = []
@@ -92,4 +92,4 @@ if __name__ == "__main__":
     end_time = datetime.datetime.now()
     print(end_time)
     print(end_time-start_time)
-    write_res("pd_q_vs_allD.txt", res_agent_q_table_list)
+    write_res("pd_q_vs_alld.txt", res_agent_q_table_list)

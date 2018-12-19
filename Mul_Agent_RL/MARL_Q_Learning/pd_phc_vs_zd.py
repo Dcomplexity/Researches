@@ -36,7 +36,7 @@ def play_one_game(agent_x=AgentPHC, agent_y=AgentFixedStrategy):
         a_y = agent_y.choose_action(s)
         r_x, r_y, s_ = game_env_feedback(a_x, a_y)
         agent_x.update_q_table(s, a_x, r_x, s_)
-        agent_x.update_strategy(s, a_x)
+        agent_x.update_strategy(s)
         ep += 1
         agent_x.set_alpha(ep)  # alpha (learning rate) change with time
         agent_x.set_epsilon(ep)  # epsilon (choose action randomly) change with time
@@ -96,5 +96,5 @@ if __name__ == "__main__":
     end_time = datetime.datetime.now()
     print(end_time)
     print(end_time-start_time)
-    write_res("pd_phc_vs_allD.txt", res_agent_strategy_list)
+    write_res("pd_phc_vs_zd.txt", res_agent_strategy_list)
 

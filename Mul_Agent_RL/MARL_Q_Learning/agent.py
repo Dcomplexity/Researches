@@ -44,7 +44,7 @@ class Agent:
         if new_epsilon:
             self.epsilon = new_epsilon
         else:
-            self.epsilon = 0.5
+            self.epsilon = 0.3
 
     def initial_strategy(self):
         """
