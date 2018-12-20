@@ -23,7 +23,11 @@ def generate_network(structure, xdim=100, ydim=100):
         for i in range(adj_array.shape[0]):
             adj_link.append(np.where(adj_array[i] == 1)[0])
         population_num = xdim * ydim
-    return np.array(adj_link), population_num
+        g_edge = nx.Graph()
+        for i in range(len(adj_link)):
+            for j in range(len(adj_link[i])):
+                g_edge.add_edge(i, adj_link[i][j])
+    return np.array(adj_link), population_num, np.array(g_edge.edges())
 
 
 if __name__ == "__main__":
