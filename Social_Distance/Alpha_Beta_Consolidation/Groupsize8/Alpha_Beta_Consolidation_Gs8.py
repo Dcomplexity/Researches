@@ -261,9 +261,9 @@ if __name__ == "__main__":
     f = open(filename, 'w')
 
     startTime = datetime.datetime.now()
-    runtime = 3    
-    sampletime = 2
-    rounds = 2
+    runtime = 100    
+    sampletime = 20
+    rounds = 5
     buildResults = []
     for buildAlpha in range(-3, 4):
         for buildBeta in range(-3, 4):
