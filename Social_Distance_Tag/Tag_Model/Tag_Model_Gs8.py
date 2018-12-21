@@ -221,7 +221,7 @@ if __name__ == "__main__":
     buildDefectParam = args.defectParam
     buildTolerance = args.tolerance
 
-    abspath = os.path.abspath(os.path.join(os.getcwd(), "../../"))
+    abspath = os.path.abspath(os.path.join(os.getcwd(), "../"))
     dirname = abspath + "/Results/Re_Tag_Model/Re_Groupsize_8/"
     if not os.path.isdir(dirname):
         os.makedirs(dirname)
@@ -229,8 +229,8 @@ if __name__ == "__main__":
     f = open(filename, 'w')
 
     startTime = datetime.datetime.now()
-    runtime = 5    
-    sampletime = 2
+    runtime = 50    
+    sampletime = 10
     rounds = 5
     buildResults = []
     for buildAlpha in range(-3, 4):
