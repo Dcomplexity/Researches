@@ -72,7 +72,7 @@ def initialize_population():
     popu = []
     for i in range(total_num):
         # notice the difference between random.randint and np.random.randint
-        popu.append(AgentTag(i, network[i], random.randint(0, 1), random.randint(0, 1)))
+        popu.append(AgentTag(i, network[i], random.randint(0, 1), np.random.random()))
     return popu, network, total_num, edges
 
 

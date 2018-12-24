@@ -72,7 +72,7 @@ def initialize_population():
     popu = []
     for i in range(total_num):
         # notice the difference between random.randint and np.random.randint
-        popu.append(AgentTag(i, network[i], random.randint(0, 1), random.randint(0, 1)))
+        popu.append(Agent(i, network[i], random.randint(0, 1)))
     return popu, network, total_num, edges
 
 
@@ -87,10 +87,9 @@ def evolution_one_step(popu, total_num, edges, b):
     for edge in edges:
         i = edge[0]
         j = edge[1]
-        if abs(popu[i].get_tag() - popu[j].get_tag()) < 0.05:
-            r_i, r_j = pd_game(popu[i].get_strategy(), popu[j].get_strategy(), b)
-            popu[i].add_payoffs(r_i)
-            popu[j].add_payoffs(r_j)
+        r_i, r_j = pd_game(popu[i].get_strategy(), popu[j].get_strategy(), b)
+        popu[i].add_payoffs(r_i)
+        popu[j].add_payoffs(r_j)
     # Backup the strategy in this round
     for i in range(total_num):
         popu[i].set_ostrategy()
