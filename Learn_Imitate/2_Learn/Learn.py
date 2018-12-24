@@ -113,3 +113,10 @@ class Agent:
 
     def update_time_step(self):
         self.time_step += 1
+
+
+def initialize_population():
+    network, total_num, edges = generate_network(structure='2d_grid')
+    popu = []
+    for i in range(total_num):
+        #
