@@ -1,0 +1,1 @@
+Use this folder to store the files that not be used currently.
