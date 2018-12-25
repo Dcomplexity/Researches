@@ -1,0 +1,17 @@
+# Ignore everything
+*
+
+# But not these files
+!*.gitignore
+!*.cpp
+!*.h
+!*.md
+!CMakeLists.txt
+!run.sh
+!*.py
+!README.md
+
+# even if they are in subdirectories
+!*/
+
+**/CMakeFiles

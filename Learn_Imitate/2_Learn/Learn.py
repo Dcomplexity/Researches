@@ -118,5 +118,18 @@ class Agent:
 def initialize_population():
     network, total_num, edges = generate_network(structure='2d_grid')
     popu = []
+    time_step = 0
+    alpha = alpha_time(time_step)
+    gamma = 0.9
+    epsilon = epsilon_time(time_step)
     for i in range(total_num):
-        #
+        # popu add Agent
+        popu.append(Agent(i, network[i], random.randint(0, 1), alpha, gamma, epsilon))
+    return popu, network, total_num, edges
+
+
+def evolution_one_step(popu, total_num, edges, b):
+    for i in range(total_num):
+        popu[i].set_payoffs(0)
+    for edge in edges:
+        
