@@ -45,7 +45,6 @@ class socialStructure():
         return np.array(self.indPos), np.array(self.posInd)
 
 
-
 def PDGame(strategy0, strategy1, b):
     if strategy0 == 1 and strategy1 == 1:
         return (1, 1)
@@ -123,57 +122,15 @@ def pickIndividual(positions, posInd):
     indIndex = np.random.choice(potentialInd, 1)[0]
     return int(indIndex)
 
-def buildRep(indStrategy, posInd, groupBase, groupLength):
-    """
-    First build reputation system, the reputaion of a community is based on the fraction of cooperators.
-    :param
-    indStrategy: the strategy of individuals
-    posInd: position -> individual
-    groupBase: 2
-    groupLength: to calculate the number of groups
-    :return
-    positionRepFre (list): the reputation of a group
-    """ 
-    positionNum = groupBase ** (groupLength - 1) 
-    positionRep = [0 for x in range(positionNum)]
-    for i in range(positionNum):
-        coNum = 0 # coNum -> the number of cooperators in position i
-        for j in posInd[i]: # the individual in position i
-            if indStrategy[j] == 1:
-                coNum += 1
-        positionRep[i] = coNum / len(posInd[i])
-    return positionRep
+def buildTag(totalNum):
+    indTag = np.random.random(totalNum)
+    return indTag
 
-def pickIndividualBasedRep(positionRep, positions, posInd):
-    """
-    Higher the reputation is, the more likely the community will be picked.
-    Then pick an individual randomly from this community.
-    :param
-    positions: the positions from which pick up an individual
-    posInd: position -> individual
-    :return
-    indIndex (int): the index of individual
-    """
-    potentialInd = []
-    potentialPosRep = []
-    for i in positions:
-        potentialPosRep.append(positionRep[i])
-    sumRep = np.sum(potentialPosRep)
-    if sumRep == 0:
-        potentialPosRepFre = [1/len(potentialPosRep) for x in range(len(potentialPosRep))]
-    else:
-        potentialPosRepFre = potentialPosRep / np.sum(potentialPosRep)
-    potentialPosIndex = np.random.choice(positions, 1, p=potentialPosRepFre)[0]
-    for j in posInd[potentialPosIndex]:
-        potentialInd.append(j)
-    indIndex = np.random.choice(potentialInd, 1)[0]
-    return int(indIndex)
-
-def initailizeStrategy(totalNum):
+def initializeStrategy(totalNum):
     indStrategy = np.random.randint(0, 2, totalNum)
     return indStrategy
 
-def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase, groupLength, totalNum, indPos, posInd, rt, rq):
+def runGame(indStrategy, indTag, alpha, beta, playNum, defectParam, groupSize, groupBase, groupLength, totalNum, indPos, posInd, tolerance):
     """
     Run one game
     :param indStrategy: strategies of each individuals used in this round
@@ -198,12 +155,7 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
     probPlay = distanceProb(groupLength, groupSize, alpha)
     probLearn = distanceProb(groupLength, groupSize, beta)
 
-    groupRep = buildRep(indStrategy, posInd, groupBase, groupLength)
-    indRep = np.zeros(totalNum)
-    for i in range(totalNum):
-        indRep[i] = groupRep[indPos[i]]
-
-    # generate the opponent to play the game based on reputation
+    # generate the opponent to play the game
     for i in range(totalNum):
         nowPosition = indPos[i]
         potentialPos = getPosition(groupLength, nowPosition, probPlay)
@@ -221,9 +173,10 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
         playerStrategy = indStrategy[playerIndex]
         opponentIndex = opponentPlay[i]
         opponentStrategy = indStrategy[opponentIndex]
-        repFre = 1 / (1 + rt * math.e ** -(indRep[playerIndex] * indRep[opponentIndex] * rq))
-        if np.random.random() < repFre:
+        # print ("player: ", i, "opponent: ", opponentIndex)
+        if abs(indTag[playerIndex] - indTag[opponentIndex]) < tolerance:
             (payoffsI, payoffsJ) = PDGame(playerStrategy, opponentStrategy, defectParam)
+            # print (payoffsI, payoffsJ)
             payoffs[playerIndex] += payoffsI
             payoffs[opponentIndex] += payoffsJ
 
@@ -263,15 +216,11 @@ if __name__ == "__main__":
 
     # parser = argparse.ArgumentParser(description="Set the buildDefectParam")
     # parser.add_argument('-d', '--defectParam', type=float, required=True, help='Set the defect Parameter')
-    # parser.add_argument('-t', '--rt', type=float, required=True, help='Set the rt parameter for the use of reputation')
-    # parser.add_argument('-q', '--rq', type=float, required=True, help='Set the rq parameter for the use of reputation')
+    # parser.add_argument('-t', '--tolerance', type=float, required=True, help="Set the tolerance Parameter")
     # args = parser.parse_args()
     # buildDefectParam = args.defectParam
-    # buildRt = args.rt
-    # buildRq = args.rq
-    # Set the action rule param
-    buildRt = 100
-    buildRq = 8
+    # buildTolerance = args.tolerance
+    buildTolerance = 0.1
     buildAlpha = -2
     buildBeta = 2
 
@@ -279,11 +228,11 @@ if __name__ == "__main__":
     dirname = abspath + "/Results/Re_Frac_Co_Param_b/"
     if not os.path.isdir(dirname):
         os.makedirs(dirname)
-    filename = dirname + "Re_Reputation_b_Gs_8.txt"
+    filename = dirname + "Re_Tag_b_Gs_8.txt"
     f = open(filename, 'w')
 
     startTime = datetime.datetime.now()
-    runtime = 50
+    runtime = 50    
     sampletime = 10
     rounds = 5
     buildResults = []
@@ -291,12 +240,13 @@ if __name__ == "__main__":
         print (buildDefectParam)
         roundResults = np.zeros(rounds)
         for roundIndex in range(rounds):
-            buildIndStrategy = initailizeStrategy(buildTotalNum)
+            buildIndStrategy = initializeStrategy(buildTotalNum)
+            buildIndTag = buildTag(buildTotalNum)
             for i in range(runtime):
-                buildIndStrategy = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd, buildRt, buildRq)
+                buildIndStrategy = runGame(buildIndStrategy, buildIndTag, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd, buildTolerance)
             sampleStrategy = []
             for i in range(sampletime):
-                buildIndStrategy = runGame(buildIndStrategy, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd, buildRt, buildRq)
+                buildIndStrategy = runGame(buildIndStrategy, buildIndTag, buildAlpha, buildBeta, buildPlayNum, buildDefectParam, buildGroupSize, buildGroupBase, buildGroupLength, buildTotalNum, buildIndPos, buildPosInd, buildTolerance)
                 sampleStrategy.append(np.mean(buildIndStrategy))
             roundResults[roundIndex] = np.mean(sampleStrategy)
         finalResults = np.mean(roundResults)
@@ -306,7 +256,7 @@ if __name__ == "__main__":
     endTime = datetime.datetime.now()
     print (buildResults)
 
-    print (endTime - startTime)
+    print (endTime-startTime)
 
 
     # indOldStrategy = np.zeros(buildTotalNum)

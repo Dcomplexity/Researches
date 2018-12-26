@@ -248,9 +248,9 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
 
 
 if __name__ == "__main__":
-    buildGroupSize = 8
+    buildGroupSize = 2
     buildGroupBase = 2
-    buildGroupLength = 8
+    buildGroupLength = 10
     buildTotalNum = buildGroupSize * (buildGroupBase ** (buildGroupLength - 1))
     (buildIndPos, buildPosInd) = buildStrucure(buildGroupSize, buildGroupBase, buildGroupLength)
     print (buildIndPos)
@@ -279,7 +279,7 @@ if __name__ == "__main__":
     dirname = abspath + "/Results/Re_Frac_Co_Param_b/"
     if not os.path.isdir(dirname):
         os.makedirs(dirname)
-    filename = dirname + "Re_Reputation_b_Gs_8.txt"
+    filename = dirname + "Re_Reputation_b_Gs_2.txt"
     f = open(filename, 'w')
 
     startTime = datetime.datetime.now()

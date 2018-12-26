@@ -230,7 +230,7 @@ if __name__ == "__main__":
     sampletime = 10
     rounds = 5
     buildResults = []
-    for buildDefectParam in [x/10.0 for x in range(10, 21)]:
+    for buildDefectParam in [x/10.0 for x in range(10, 31)]:
         print (buildDefectParam)
         roundResults = np.zeros(rounds)
         for roundIndex in range(rounds):
