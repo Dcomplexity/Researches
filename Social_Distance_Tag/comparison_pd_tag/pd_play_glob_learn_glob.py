@@ -104,7 +104,7 @@ def evolution_one_step(popu, total_num, edges, all_except_self, b):
 
 
 def run(b):
-    run_time = 100
+    run_time = 5000
     popu, network, total_num, edges, all_except_self = initialize_population()
     for _ in range(run_time):
         popu = evolution_one_step(popu, total_num, edges, all_except_self, b)

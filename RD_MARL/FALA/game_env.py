@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def pd_game_0(a_x, a_y):
     if (a_x, a_y) == (1, 1):
         return 3, 3
@@ -36,13 +37,17 @@ def transition_matrix(s, a_x, a_y):
 
 def next_state(s, a_x, a_y):
     prob = transition_matrix(s, a_x, a_y)
+    # print(prob)
     if np.random.random() < prob:
-        s_ = s
-    else:
         s_ = 1 - s
+    else:
+        s_ = s
     return s_
 
 
 if __name__ == "__main__":
-    p_s = transition_matrix(1, 0, 1)
-    print(p_s)
+    s_sum = 0
+    for i in range(1000):
+        p_s = next_state(1, 1, 1)
+        s_sum += p_s
+    print(s_sum)
