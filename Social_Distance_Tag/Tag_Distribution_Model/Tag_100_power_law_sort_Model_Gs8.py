@@ -127,7 +127,6 @@ def buildTag(totalNum):
     # power law
     tag_pro = [1 / _**2 for _ in tag_list]
     tag_pro = tag_pro / np.sum(tag_pro)
-    print(tag_pro)
     indTag = np.zeros(totalNum).ravel()
     for i in range(totalNum):
         indTag[i] = np.random.choice(tag_list, p=tag_pro)
