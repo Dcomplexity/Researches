@@ -128,7 +128,7 @@ if __name__ == "__main__":
     # Alice.record_strategy()
     # print(Alice_sum)
     agent_0_strategy_trace, agent_1_strategy_trace = \
-        run_game(agent_0_init_strategy={0: 0.2, 1: 0.06}, agent_1_init_strategy={0: 0.7, 1: 0.52}, s_0=0)
+        run_game(agent_0_init_strategy={0: 0.2, 1: 0.1}, agent_1_init_strategy={0: 0.7, 1: 0.5}, s_0=0)
     print(agent_0_strategy_trace[-1], agent_1_strategy_trace[-1])
     agent_0_0_strategy_t = []  # agent 0 in state 0
     agent_1_0_strategy_t = []  # agent 1 in state 0
