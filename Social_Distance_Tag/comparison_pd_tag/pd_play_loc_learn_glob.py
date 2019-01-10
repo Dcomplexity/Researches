@@ -126,7 +126,7 @@ def evaluation(popu, edges, all_except_self, b):
 
 
 if __name__ == "__main__":
-    b_v = 1.2
+    b_v = 1.5
     initializations = 10
     result = []
     startTime = datetime.datetime.now()
