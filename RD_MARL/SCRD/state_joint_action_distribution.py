@@ -33,14 +33,14 @@ def gen_payoff_matrix(pds, a_l, s, a_x, a_y, pi, s_d):
     p = np.array(pds[s](a_x, a_y))*s_d[s*2**2 + a_x*2 + a_y][s]
     for a_x_s_ in a_l:
         for a_y_s_ in a_l:
-            p += pds[1-s](a_x_s_, a_y_s_)[0]*pi[0][1-s][a_x_s_]*pi[1][1-s][a_y_s_]*s_d[s*2**2+a_x_s_*2+a_y_s_][1-s]
+            p += np.array(pds[1-s](a_x_s_, a_y_s_))*pi[0][1-s][a_x_s_]*pi[1][1-s][a_y_s_]*s_d[s*2**2+a_x*2+a_y][1-s]
     print(p)
     return p
 
 
 if __name__ == "__main__":
     pd_games = [play_pd_game_1, play_pd_game_2]
-    policy_pi = [{0: [0.2, 0.8], 1: [0.7, 0.3]}, {0: [0.7, 0.3], 1: [0.2, 0.8]}]
+    policy_pi = [{0: [0.2, 0.8], 1: [0.3, 0.7]}, {0: [0.7, 0.3], 1: [0.8, 0.2]}]
     states = [0, 1]
     actions = [0, 1]
     state_dist = []
