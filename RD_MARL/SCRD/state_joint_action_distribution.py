@@ -55,7 +55,7 @@ def run(pi):
 
 
 if __name__ == "__main__":
-    policy_pi = [{0: [0.2, 0.8], 1: [0.3, 0.7]}, {0: [0.7, 0.3], 1: [0.8, 0.2]}]
+    policy_pi = [{0: [0.3, 0.7], 1: [0.3, 0.7]}, {0: [0.8, 0.2], 1: [0.8, 0.2]}]
     state_dist, payoff_matrix = run(policy_pi)
     print(state_dist)
     print(payoff_matrix)
