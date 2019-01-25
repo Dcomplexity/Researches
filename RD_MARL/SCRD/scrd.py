@@ -38,9 +38,9 @@ def deriv(x, step):
     x[0] = (payoff_cal(0, 0, a_l, [0, 1], p_matrix, pi) - payoff_cal(0, 0, a_l, pi[0][0], p_matrix, pi)) * x[0] * \
            s_pi_dist[0]
     x[1] = (payoff_cal(0, 1, a_l, [0, 1], p_matrix, pi) - payoff_cal(0, 1, a_l, pi[0][1], p_matrix, pi)) * x[1] * \
-           s_pi_dist[0]
-    x[2] = (payoff_cal(1, 0, a_l, [0, 1], p_matrix, pi) - payoff_cal(1, 0, a_l, pi[1][0], p_matrix, pi)) * x[2] * \
            s_pi_dist[1]
+    x[2] = (payoff_cal(1, 0, a_l, [0, 1], p_matrix, pi) - payoff_cal(1, 0, a_l, pi[1][0], p_matrix, pi)) * x[2] * \
+           s_pi_dist[0]
     x[3] = (payoff_cal(1, 1, a_l, [0, 1], p_matrix, pi) - payoff_cal(1, 1, a_l, pi[1][1], p_matrix, pi)) * x[3] * \
            s_pi_dist[1]
     # return np.array([x[0]+step*dx0, x[1]+step*dx1, x[2]+step*dx2, x[3]*step*dx3])
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     # state_dist, payoff_matrix = sjad.run(policy_pi)
     # p = payoff_cal(0, 0, actions, [0, 1], payoff_matrix, policy_pi)
     # print(p)
-    t = np.arange(0, 100, 0.01)
+    t = np.arange(0, 100, 0.0001)
     x = np.array([0.2, 0.1, 0.7, 0.5])
     x = odeint(deriv, x, t)
     print(x)

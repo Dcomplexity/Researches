@@ -58,14 +58,14 @@ def run_game(agent_0_init_strategy, agent_1_init_strategy, s_0):
     :param s_0: initial state
     :return:
     """
-    agent_0 = Agent(alpha=0.00005, agent_id=0)
-    agent_1 = Agent(alpha=0.00005, agent_id=1)
+    agent_0 = Agent(alpha=0.0001, agent_id=0)
+    agent_1 = Agent(alpha=0.0001, agent_id=1)
     agent_0.initial_strategy()
     agent_1.initial_strategy()
     agent_0.set_strategy(agent_0_init_strategy)
     agent_1.set_strategy(agent_1_init_strategy)
     cur_s = s_0
-    games = [pd_game_0, pd_game_1]
+    games = [play_pd_game_1, play_pd_game_2]
     r_sum_0 = np.array([0, 0])  # store the sum of reward of agent_0 for each state: state 0 and state 1
     r_sum_1 = np.array([0, 0])
     tau_0 = np.array([0, 0])  # the reward of agent_0 used to update the strategy for each state
@@ -110,8 +110,8 @@ def run_game(agent_0_init_strategy, agent_1_init_strategy, s_0):
             time_step[cur_s] = 0
             time_step += 1
             cur_s = next_state(cur_s, a_0, a_1)
-            # It is not necessary, if one state not visited, the reward is accumulated in that state.
-            # If one state is visited, the reward summed will be zero.
+            # It is not necessary, if one state is not visited, the reward is accumulated in that state.
+            # If one state is visited, the sum of reward will be zero.
             # visited[cur_s] = 1
     return agent_0.strategy_trace, agent_1.strategy_trace
 

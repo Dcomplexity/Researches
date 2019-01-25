@@ -3,7 +3,7 @@ from scipy.linalg import solve
 from game_env import *
 
 
-def param_start_end(s_start, s_end, a_l, pi):  # solve the Q value
+def param_start_end(s_start, s_end, a_l, pi):  # calculate the Q value
     r_sum = 0
     for a_x in a_l:
         for a_y in a_l:
@@ -22,7 +22,10 @@ def param_matrix(s_l, a_l, pi):
 
 def gen_s_joint_action_dist(s_l, a_l, s, a_x, a_y, pi):
     param_m = param_matrix(s_l, a_l, pi)
-    a = np.array([[transition_prob(s, 1-s, a_x, a_y), param_m[1-s][1-s] - 1], [1, 1]])
+    if s == 0:
+        a = np.array([[transition_prob(s, 1-s, a_x, a_y), param_m[1-s][1-s] - 1], [1, 1]])
+    elif s == 1:
+        a = np.array([[param_m[1-s][1-s]-1, transition_prob(s, 1-s, a_x, a_y)], [1, 1]])
     # a = np.array([[transition_prob(s, s, a_x, a_y) - 1, param_m[1-s][s]], [1, 1]])
     b = np.array([0, 1])
     x = solve(a, b)
