@@ -40,7 +40,7 @@ def evolve(strategy, steps):
 if __name__ == "__main__":
     states = [0, 1]
     actions = [0, 1]
-    t = np.arange(0, 1000)
+    t = np.arange(0, 1000000)
     d = []
     p = [0.2, 0.1, 0.7, 0.5]
     d.append(p)
