@@ -8,6 +8,7 @@
 !*.md
 !CMakeLists.txt
 !run.sh
+!*.py
 
 # even if they are in subdirectories
 !*/

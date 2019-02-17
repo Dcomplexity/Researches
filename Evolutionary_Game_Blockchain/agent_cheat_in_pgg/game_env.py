@@ -2,18 +2,16 @@ import networkx as nx
 import numpy as np
 
 
-def pd_game(strategy0, strategy1, b):
-    if strategy0 == 1 and strategy1 == 1:
-        return 1, 1
-    elif strategy0 == 1 and strategy1 == 0:
-        return 0, b
-    elif strategy0 == 0 and strategy1 == 1:
-        return b, 0
-    elif strategy0 == 0 and strategy1 == 0:
-        return 0, 0
-    else:
-        return "Error"
-
+def public_goods_game(s_l, r):
+    s_num = len(s_l)
+    p_l = []
+    p = r * np.sum(s_l) / s_num
+    for i in range(s_num):
+        p_l.append(p - s_l[i])
+    return p_l
+    # agent_num = len(strategy)
+    # payoffs = np.array([np.sum(strategy)*r/agent_num for _ in range(agent_num)]) - np.array(strategy)
+    # return payoffs
 
 def generate_network(structure, xdim=100, ydim=100):
     if structure == "2d_grid":
@@ -31,7 +29,9 @@ def generate_network(structure, xdim=100, ydim=100):
 
 
 if __name__ == "__main__":
-    adj_link_v, p_num_v, p_edge = generate_network(structure='2d_grid')
-    print(adj_link_v)
-    print(p_num_v)
-    print(p_edge)
+    adj_link_r, p_num_r, p_edge_r = generate_network(structure='2d_grid')
+    # print(adj_link_r)
+    # print(p_num_r)
+    # print(p_edge_r)
+    payoffs_list = public_goods_game([1, 0, 0, 0], 2.0)
+    print(payoffs_list)
