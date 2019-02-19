@@ -59,7 +59,7 @@ def initialize_population():
     return popu, network, total_num, edges
 
 
-def evolution_one_step(popu, total_num, edges, r):
+def evolution_one_step(popu, total_num, edges, r, m):
     for i in range(total_num):
         popu[i].set_payoffs(0)
     for i in range(total_num):
@@ -70,10 +70,11 @@ def evolution_one_step(popu, total_num, edges, r):
         s_l = list()
         for j in neigh:
             s_l.append(popu[j].get_strategy())
-        p_l = public_goods_game(s_l, r)
-        for k in range(len(neigh)):
-            j = neigh[k]
-            popu[j].add_payoffs(p_l[k])
+        if np.sum(s_l) > m:
+            p_l = public_goods_game(s_l, r)
+            for k in range(len(neigh)):
+                j = neigh[k]
+                popu[j].add_payoffs(p_l[k])
     # Backup the strategy in this round
     for i in range(total_num):
         popu[i].set_ostrategy()
@@ -84,20 +85,20 @@ def evolution_one_step(popu, total_num, edges, r):
     return popu
 
 
-def run(r):
+def run(r, m):
     run_time = 100
     popu, network, total_num, edges = initialize_population()
     for _ in range(run_time):
-        popu = evolution_one_step(popu, total_num, edges, r)
+        popu = evolution_one_step(popu, total_num, edges, r, m)
     return popu, network, total_num, edges
 
 
-def evaluation(popu, edges, r):
+def evaluation(popu, edges, r, m):
     sample_time = 10
     sample_strategy = []
     total_num = len(popu)
     for _ in range(sample_time):
-        popu = evolution_one_step(popu, total_num, edges, r)
+        popu = evolution_one_step(popu, total_num, edges, r, m)
         strategy = []
         for i in range(total_num):
             strategy.append(popu[i].get_strategy())
@@ -107,13 +108,14 @@ def evaluation(popu, edges, r):
 
 if __name__ == "__main__":
     r_r = 2.0
+    m_r = 3
     initializations = 1
     result = []
     start_time = datetime.datetime.now()
     print(start_time)
     for _ in range(initializations):
-        population_r, network_r, total_number_r, edges_r = run(r_r)
-        result.append(evaluation(population_r, edges_r, r_r))
+        population_r, network_r, total_number_r, edges_r = run(r_r, m_r)
+        result.append(evaluation(population_r, edges_r, r_r, m_r))
     end_time = datetime.datetime.now()
     print(end_time)
     print(end_time - start_time)
