@@ -125,8 +125,18 @@ def pickIndividual(positions, posInd):
     return int(indIndex)
 
 def initailizeStrategy(totalNum):
-    indStrategy = np.random.randint(0, 2, totalNum)
+    indStrategy = np.random.choice([0, 1, 2], totalNum, p=[0.4, 0.3, 0.3])
     return indStrategy
+
+
+def find_defectors(indStrategy, posInd, groupBase, groupLength):
+    positionNum = groupBase ** (groupLength - 1)
+    position_defectors = [[] for x in range(positionNum)]
+    for i in range(positionNum):
+        for j in posInd[i]:
+            if indStrategy[j] == 0:
+                position_defectors[i].append(j)
+    return position_defectors
 
 
 def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase, groupLength, totalNum, indPos, posInd):
@@ -178,6 +188,20 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
         payoffs[playerIndex] += payoffsI
         payoffs[opponentIndex] += payoffsJ
 
+
+    community_defectors = find_defectors(indStrategy, posInd, groupBase, groupLength)
+
+
+    for i in range(totalNum):
+        if indStrategy[i] == 2:
+            payoffs[i] = payoffs[i] - 0.1
+            i_Position = indPos[i]
+            i_community_defectors = community_defectors[i_Position]
+            for j in i_community_defectors:
+                print("dd")
+                payoffs[j] = payoffs[j] - (defectParam-1.0) / len(community_defectors)
+
+
     # player tries to update his strategy
     for i in range(totalNum):
         playerIndex = i
@@ -218,19 +242,19 @@ if __name__ == "__main__":
     buildDefectParam = args.defectParam
 
     abspath = os.path.abspath(os.path.join(os.getcwd(), "../"))
-    dirname = abspath + "/Results/Re_Alpha_Beta/"
+    dirname = abspath + "/Results/Re_Alpha_Beta_Punishment/"
     if not os.path.isdir(dirname):
         os.makedirs(dirname)
     filename = dirname + "Re_Co_Rate_Gs_4_Dp_%s.txt" %buildDefectParam
     f = open(filename, 'w')
 
     startTime = datetime.datetime.now()
-    runtime = 100
-    sampletime = 20
-    rounds = 10
+    runtime = 10
+    sampletime = 2
+    rounds = 2
     buildResults = []
-    for buildAlpha in range(-3, 4):
-        for buildBeta in range(-3, 4):
+    for buildAlpha in range(-2, 3):
+        for buildBeta in range(-2, 3):
             print (buildAlpha, buildBeta)
             roundResults = np.zeros(rounds)
             for roundIndex in range(rounds):
