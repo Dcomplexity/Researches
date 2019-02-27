@@ -188,17 +188,15 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
         payoffs[playerIndex] += payoffsI
         payoffs[opponentIndex] += payoffsJ
 
-
     community_defectors = find_defectors(indStrategy, posInd, groupBase, groupLength)
-
 
     for i in range(totalNum):
         if indStrategy[i] == 2:
-            payoffs[i] = payoffs[i] - 0.1
+            payoffs[i] = payoffs[i] - 0.3
             i_Position = indPos[i]
             i_community_defectors = community_defectors[i_Position]
             for j in i_community_defectors:
-                payoffs[j] = payoffs[j] - (defectParam-1.0) / len(i_community_defectors)
+                payoffs[j] = payoffs[j] - 1.0 / len(i_community_defectors)
 
 
     # player tries to update his strategy
@@ -222,9 +220,9 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
 
 
 if __name__ == "__main__":
-    buildGroupSize = 4
+    buildGroupSize = 8
     buildGroupBase = 2
-    buildGroupLength = 9
+    buildGroupLength = 8
     buildTotalNum = buildGroupSize * (buildGroupBase ** (buildGroupLength - 1))
     (buildIndPos, buildPosInd) = buildStrucure(buildGroupSize, buildGroupBase, buildGroupLength)
     print (buildIndPos)
@@ -244,7 +242,7 @@ if __name__ == "__main__":
     dirname = abspath + "/Results/Re_Alpha_Beta_Punishment/"
     if not os.path.isdir(dirname):
         os.makedirs(dirname)
-    filename = dirname + "Re_Alpha_Beta_Punishment_Gs_4_Dp_%s.txt" %buildDefectParam
+    filename = dirname + "Re_Alpha_Beta_Punishement_0.3_1.0_Gs_8_Dp_%s.txt" %buildDefectParam
     f = open(filename, 'w')
 
     startTime = datetime.datetime.now()

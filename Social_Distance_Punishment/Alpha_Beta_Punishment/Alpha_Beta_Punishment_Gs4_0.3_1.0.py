@@ -194,11 +194,11 @@ def runGame(indStrategy, alpha, beta, playNum, defectParam, groupSize, groupBase
 
     for i in range(totalNum):
         if indStrategy[i] == 2:
-            payoffs[i] = payoffs[i] - 0.1
+            payoffs[i] = payoffs[i] - 0.3
             i_Position = indPos[i]
             i_community_defectors = community_defectors[i_Position]
             for j in i_community_defectors:
-                payoffs[j] = payoffs[j] - (defectParam-1.0) / len(i_community_defectors)
+                payoffs[j] = payoffs[j] - 1.0 / len(i_community_defectors)
 
 
     # player tries to update his strategy
@@ -244,7 +244,7 @@ if __name__ == "__main__":
     dirname = abspath + "/Results/Re_Alpha_Beta_Punishment/"
     if not os.path.isdir(dirname):
         os.makedirs(dirname)
-    filename = dirname + "Re_Alpha_Beta_Punishment_Gs_4_Dp_%s.txt" %buildDefectParam
+    filename = dirname + "Re_Alpha_Beta_Punishment_0.3_1.0_Gs_4_Dp_%s.txt" %buildDefectParam
     f = open(filename, 'w')
 
     startTime = datetime.datetime.now()
