@@ -151,10 +151,10 @@ if __name__ == "__main__":
     defect_param_r = args.defect_param
     play_num_r = 10
     abs_path = os.path.abspath(os.path.join(os.getcwd(), '../'))
-    dir_name = abs_path + '/results/re_alpha_beta/'
+    dir_name = abs_path + '/results/re_alpha_beta_play_num/'
     if not os.path.isdir(dir_name):
         os.makedirs(dir_name)
-    file_name = dir_name + 'frac_co_alpha_beta_gs_%s_d_%s.txt' % (group_size_r, defect_param_r)
+    file_name = dir_name + 'frac_co_alpha_beta_pn_%s_gs_%s_d_%s.txt' % (play_num_r, group_size_r, defect_param_r)
     f = open(file_name, 'w')
 
     start_time = datetime.datetime.now()

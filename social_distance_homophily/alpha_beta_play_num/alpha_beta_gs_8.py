@@ -109,14 +109,15 @@ def run_game(ind_strategy, alpha, beta, play_num, defect_param, group_size, grou
         potential_pos = get_position(group_length, now_position, prob_learn)
         opponent_learn[i] = pick_individual(i, potential_pos, pos_ind)
     # every player plays the game with an opponent
-    for i in range(total_num):
-        player_index = i
-        player_strategy = ind_strategy[player_index]
-        opponent_index = opponent_play[i]
-        opponent_strategy = ind_strategy[opponent_index]
-        payoffs_i, payoffs_j = pd_game(player_strategy, opponent_strategy, defect_param)
-        payoffs[player_index] += payoffs_i
-        payoffs[opponent_index] += payoffs_j
+    for _ in range(play_num):
+        for i in range(total_num):
+            player_index = i
+            player_strategy = ind_strategy[player_index]
+            opponent_index = opponent_play[i]
+            opponent_strategy = ind_strategy[opponent_index]
+            payoffs_i, payoffs_j = pd_game(player_strategy, opponent_strategy, defect_param)
+            payoffs[player_index] += payoffs_i
+            payoffs[opponent_index] += payoffs_j
     # player updates his strategy
     for i in range(total_num):
         player_index = i
@@ -148,12 +149,12 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--defect_param', type=float, required=True, help='Set the defector parameter b')
     args = parser.parse_args()
     defect_param_r = args.defect_param
-    play_num_r = 1
+    play_num_r = 10
     abs_path = os.path.abspath(os.path.join(os.getcwd(), '../'))
-    dir_name = abs_path + '/results/re_alpha_beta/'
+    dir_name = abs_path + '/results/re_alpha_beta_play_num/'
     if not os.path.isdir(dir_name):
         os.makedirs(dir_name)
-    file_name = dir_name + 'frac_co_alpha_beta_gs_%s_d_%s.txt' % (group_size_r, defect_param_r)
+    file_name = dir_name + 'frac_co_alpha_beta_pn_%s_gs_%s_d_%s.txt' % (play_num_r, group_size_r, defect_param_r)
     f = open(file_name, 'w')
 
     start_time = datetime.datetime.now()
