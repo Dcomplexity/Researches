@@ -120,7 +120,7 @@ def run_game(ind_strategy, alpha, beta, play_num, defect_param, group_size, grou
     # player updates his strategy
     for i in range(total_num):
         player_index = i
-        w1 = 0.01
+        w1 = 0.00
         w2 = random.random()
         if w1 > w2:
             if ind_strategy[player_index] == 1:
