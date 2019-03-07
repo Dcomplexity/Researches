@@ -147,9 +147,10 @@ if __name__ == "__main__":
     print(pos_ind_r)
     parser = argparse.ArgumentParser(description='Set the defect parameter b')
     parser.add_argument('-d', '--defect_param', type=float, required=True, help='Set the defector parameter b')
+    parser.add_argument('-n', '--play_num', type=int, required=True, help='Set the number of play times')
     args = parser.parse_args()
     defect_param_r = args.defect_param
-    play_num_r = 10
+    play_num_r = args.play_num
     abs_path = os.path.abspath(os.path.join(os.getcwd(), '../'))
     dir_name = abs_path + '/results/re_alpha_beta_play_num/'
     if not os.path.isdir(dir_name):
