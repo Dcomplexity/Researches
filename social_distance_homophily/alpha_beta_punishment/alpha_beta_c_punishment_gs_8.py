@@ -142,10 +142,9 @@ def run_game(ind_strategy, alpha, beta, play_num, defect_param, group_size, grou
         w1 = 0.01
         w2 = random.random()
         if w1 > w2:
-            if ind_strategy[player_index] == 1:
-                ind_strategy[player_index] = 0
-            else:
-                ind_strategy[player_index] = 1
+            potential_strategy = [0, 1, 2]
+            potential_strategy.remove(old_ind_strategy[i])
+            ind_strategy[i] = np.random.choice(potential_strategy)
         else:
             opponent_index = opponent_learn[i]
             t1 = 1 / (1 + math.e ** (10 * (payoffs[player_index] - payoffs[opponent_index])))
