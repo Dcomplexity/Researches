@@ -77,7 +77,7 @@ def pick_individual(ind_self, positions, pos_ind):
         for j in pos_ind[i]:
             potential_ind.append(j)
     # remove the individual itself from the potential opponents list
-    potential_ind.remove(ind_self)
+    # potential_ind.remove(ind_self)
     ind_index = np.random.choice(potential_ind, 1)[0]
     return int(ind_index)
 
@@ -93,27 +93,30 @@ def run_game(ind_strategy, alpha, beta, play_num, defect_param, group_size, grou
     old_ind_strategy = np.zeros(total_num)
     for i in range(total_num):
         old_ind_strategy[i] = ind_strategy[i]
+    opponent_play = np.zeros(total_num, dtype=int)
     opponent_learn = np.zeros(total_num, dtype=int)
     payoffs = np.zeros(total_num)
     prob_play = distance_prob(group_length, group_size, alpha)
     prob_learn = distance_prob(group_length, group_size, beta)
-    # every player plays the game with an opponent
+    # generate the opponent to play the game
     for i in range(total_num):
-        player_index = i
-        player_strategy = ind_strategy[player_index]
         now_position = ind_pos[i]
-        for _ in range(play_num):
-            potential_pos = get_position(group_length, now_position, prob_play)
-            opponent_index = pick_individual(i, potential_pos, pos_ind)
-            opponent_strategy = ind_strategy[opponent_index]
-            payoffs_i, payoffs_j = pd_game(player_strategy, opponent_strategy, defect_param)
-            payoffs[player_index] += payoffs_i
-            payoffs[opponent_index] += payoffs_j
+        potential_pos = get_position(group_length, now_position, prob_play)
+        opponent_play[i] = pick_individual(i, potential_pos, pos_ind)
     # generate the opponent from whom learn
     for i in range(total_num):
         now_position = ind_pos[i]
         potential_pos = get_position(group_length, now_position, prob_learn)
         opponent_learn[i] = pick_individual(i, potential_pos, pos_ind)
+    # every player plays the game with an opponent
+    for i in range(total_num):
+        player_index = i
+        player_strategy = ind_strategy[player_index]
+        opponent_index = opponent_play[i]
+        opponent_strategy = ind_strategy[opponent_index]
+        payoffs_i, payoffs_j = pd_game(player_strategy, opponent_strategy, defect_param)
+        payoffs[player_index] += payoffs_i
+        payoffs[opponent_index] += payoffs_j
     # player updates his strategy
     for i in range(total_num):
         player_index = i
@@ -134,24 +137,23 @@ def run_game(ind_strategy, alpha, beta, play_num, defect_param, group_size, grou
 
 
 if __name__ == "__main__":
-    group_size_r = 16
+    group_size_r = 8
     group_base_r = 2
-    group_length_r = 7
+    group_length_r = 8
     total_num_r = group_size_r * (group_base_r ** (group_length_r - 1))
     ind_pos_r, pos_ind_r = build_structure(group_size_r, group_base_r, group_length_r)
     print(ind_pos_r)
     print(pos_ind_r)
     parser = argparse.ArgumentParser(description='Set the defect parameter b')
     parser.add_argument('-d', '--defect_param', type=float, required=True, help='Set the defector parameter b')
-    parser.add_argument('-n', '--play_num', type=int, required=True, help='Set the number of play times')
     args = parser.parse_args()
     defect_param_r = args.defect_param
-    play_num_r = args.play_num
+    play_num_r = 1
     abs_path = os.path.abspath(os.path.join(os.getcwd(), '../'))
-    dir_name = abs_path + '/results/re_alpha_beta_play_num/'
+    dir_name = abs_path + '/results/re_alpha_beta/'
     if not os.path.isdir(dir_name):
         os.makedirs(dir_name)
-    file_name = dir_name + 'frac_co_alpha_beta_pn_%s_gs_%s_d_%s.txt' % (play_num_r, group_size_r, defect_param_r)
+    file_name = dir_name + 'frac_co_alpha_beta_with_self_gs_%s_d_%s.txt' % (group_size_r, defect_param_r)
     f = open(file_name, 'w')
 
     start_time = datetime.datetime.now()

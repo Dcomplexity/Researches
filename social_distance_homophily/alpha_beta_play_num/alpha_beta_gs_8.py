@@ -93,31 +93,27 @@ def run_game(ind_strategy, alpha, beta, play_num, defect_param, group_size, grou
     old_ind_strategy = np.zeros(total_num)
     for i in range(total_num):
         old_ind_strategy[i] = ind_strategy[i]
-    opponent_play = np.zeros(total_num, dtype=int)
     opponent_learn = np.zeros(total_num, dtype=int)
     payoffs = np.zeros(total_num)
     prob_play = distance_prob(group_length, group_size, alpha)
     prob_learn = distance_prob(group_length, group_size, beta)
-    # generate the opponent to play the game
+    # every player plays the game with an opponent
     for i in range(total_num):
+        player_index = i
+        player_strategy = ind_strategy[player_index]
         now_position = ind_pos[i]
-        potential_pos = get_position(group_length, now_position, prob_play)
-        opponent_play[i] = pick_individual(i, potential_pos, pos_ind)
+        for _ in range(play_num):
+            potential_pos = get_position(group_length, now_position, prob_play)
+            opponent_index = pick_individual(i, potential_pos, pos_ind)
+            opponent_strategy = ind_strategy[opponent_index]
+            payoffs_i, payoffs_j = pd_game(player_strategy, opponent_strategy, defect_param)
+            payoffs[player_index] += payoffs_i
+            payoffs[opponent_index] += payoffs_j
     # generate the opponent from whom learn
     for i in range(total_num):
         now_position = ind_pos[i]
         potential_pos = get_position(group_length, now_position, prob_learn)
         opponent_learn[i] = pick_individual(i, potential_pos, pos_ind)
-    # every player plays the game with an opponent
-    for _ in range(play_num):
-        for i in range(total_num):
-            player_index = i
-            player_strategy = ind_strategy[player_index]
-            opponent_index = opponent_play[i]
-            opponent_strategy = ind_strategy[opponent_index]
-            payoffs_i, payoffs_j = pd_game(player_strategy, opponent_strategy, defect_param)
-            payoffs[player_index] += payoffs_i
-            payoffs[opponent_index] += payoffs_j
     # player updates his strategy
     for i in range(total_num):
         player_index = i
@@ -159,9 +155,9 @@ if __name__ == "__main__":
     f = open(file_name, 'w')
 
     start_time = datetime.datetime.now()
-    run_time = 100
-    sample_time = 20
-    rounds = 10
+    run_time = 50
+    sample_time = 10
+    rounds = 5
     results_r = []
     for alpha_r in range(-2, 3):
         for beta_r in range(-2, 3):
