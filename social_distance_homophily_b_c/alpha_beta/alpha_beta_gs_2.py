@@ -26,6 +26,7 @@ class SocialStructure():
                 pos_ind[i].append(j)
         return np.array(ind_pos), np.array(pos_ind)
 
+
 # T = b, R = b-c, P = 0, S = -c. Here, we define c = 1
 def pd_game(strategy_x, strategy_y, b):
     if strategy_x == 1 and strategy_y == 1:

@@ -27,13 +27,14 @@ class SocialStructure():
         return np.array(ind_pos), np.array(pos_ind)
 
 
+# T = b, R = b-c, P = 0, S = -c. Here, we define c = 1
 def pd_game(strategy_x, strategy_y, b):
     if strategy_x == 1 and strategy_y == 1:
-        return 1, 1
+        return b-1, b-1
     elif strategy_x == 1 and strategy_y == 0:
-        return 0, b
+        return -1, b
     elif strategy_x == 0 and strategy_y == 1:
-        return b, 0
+        return b, -1
     elif strategy_x == 0 and strategy_y == 0:
         return 0, 0
     else:
@@ -180,9 +181,9 @@ if __name__ == "__main__":
     f = open(file_name, 'w')
 
     start_time = datetime.datetime.now()
-    run_time = 100
-    sample_time = 20
-    rounds = 10
+    run_time = 50
+    sample_time = 10
+    rounds = 5
     results_r = []
     for alpha_r in range(-2, 3):
         for beta_r in range(-2, 3):
