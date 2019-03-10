@@ -84,11 +84,22 @@ def pick_individual(ind_self, positions, pos_ind):
 
 
 def initialize_strategy(total_num):
-    ind_strategy = np.random.choice([0, 1, 2], total_num, p=[1/3, 1/3, 1/3])
+    ind_strategy = np.random.choice([0, 1, 2], total_num, p=[0.5, 0.25, 0.25])
     return ind_strategy
 
 
-def run_game(ind_strategy, alpha, beta, play_num, defect_param, group_size, group_base, group_length, total_num, ind_pos, pos_ind):
+def get_action(strategy, opponent_index, ind_memory_player):
+    if strategy == 0:
+        return 0
+    elif strategy == 1:
+        return 1
+    elif strategy == 2:
+            return ind_memory_player[opponent_index] # the strategy of tft individual is initialized as 1
+    else:
+        return "ERROR"
+
+
+def run_game(ind_memory, ind_strategy, alpha, beta, play_num, defect_param, group_size, group_base, group_length, total_num, ind_pos, pos_ind):
     if total_num != len(ind_pos):
         print('Error, the sum of individuals does not correspond to total number of individuals')
     old_ind_strategy = np.zeros(total_num)
@@ -113,15 +124,16 @@ def run_game(ind_strategy, alpha, beta, play_num, defect_param, group_size, grou
     for i in range(total_num):
         player_index = i
         opponent_index = opponent_play[i]
-        if ind_strategy[player_index] == 2:
-            player_strategy = old_ind_strategy[opponent_index]
-        else:
-            player_strategy = ind_strategy[player_index]
-        if ind_strategy[opponent_index] == 2:
-            opponent_strategy = old_ind_strategy[player_index]
-        else:
-            opponent_strategy = ind_strategy[opponent_index]
-        payoffs_i, payoffs_j = pd_game(player_strategy, opponent_strategy, defect_param)
+        # initialization step
+        player_action = get_action(ind_strategy[player_index], ind_met_flag[player_index],
+                                   opponent_index, ind_memory[player_index])
+        opponent_action = get_action(ind_strategy[opponent_index], ind_met_flag[opponent_index],
+                                     player_index, ind_memory[opponent_index])
+        ind_memory[player_index][opponent_index] = player_action
+        ind_memory[opponent_index][player_index] = opponent_action
+        ind_met_flag[player_index][opponent_index] = 1
+        ind_met_flag[opponent_index][player_index] = 1
+        payoffs_i, payoffs_j = pd_game(player_action, opponent_action, defect_param)
         payoffs[player_index] += payoffs_i
         payoffs[opponent_index] += payoffs_j
     # player updates his strategy
@@ -139,7 +151,7 @@ def run_game(ind_strategy, alpha, beta, play_num, defect_param, group_size, grou
             t2 = random.random()
             if t2 < t1:
                 ind_strategy[player_index] = old_ind_strategy[opponent_index]
-    return ind_strategy
+    return ind_met_flag, ind_memory, ind_strategy
 
 
 if __name__ == "__main__":
@@ -175,13 +187,17 @@ if __name__ == "__main__":
             round_results_r = []
             for round_index in range(rounds):
                 ind_strategy_r = initialize_strategy(total_num_r)
-                for i in range(run_time):
-                    ind_strategy_r = run_game(ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
-                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r)
+                ind_met_flag_r = np.zeros((total_num_r, total_num_r), dtype=int)
+                ind_memory_r = np.zeros((total_num_r, total_num_r), dtype=int)
+                for run_step in range(run_time):
+                    ind_met_flag_r, ind_memory_r, ind_strategy_r \
+                        = run_game(ind_met_flag_r, ind_memory_r, ind_strategy_r, alpha_r, beta_r, play_num_r,
+                                   defect_param_r, group_size_r, group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r)
                 sample_strategy = []
-                for i in range(sample_time):
-                    ind_strategy_r = run_game(ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
-                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r)
+                for sample_step in range(sample_time):
+                    ind_met_flag_r, ind_memory_r, ind_strategy_r \
+                        = run_game(ind_met_flag_r, ind_memory_r, ind_strategy_r, alpha_r, beta_r, play_num_r,
+                                   defect_param_r, group_size_r, group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r)
                     cal_strategy = np.zeros(3)
                     for i in ind_strategy_r:
                         cal_strategy[i] += 1
