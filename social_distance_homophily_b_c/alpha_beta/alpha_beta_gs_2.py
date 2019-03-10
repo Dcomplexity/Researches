@@ -157,9 +157,9 @@ if __name__ == "__main__":
     f = open(file_name, 'w')
 
     start_time = datetime.datetime.now()
-    run_time = 100
-    sample_time = 20
-    rounds = 10
+    run_time = 50
+    sample_time = 10
+    rounds = 5
     results_r = []
     for alpha_r in range(-2, 3):
         for beta_r in range(-2, 3):
