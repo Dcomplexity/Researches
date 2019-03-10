@@ -30,11 +30,11 @@ class SocialStructure():
 
 def pd_game(strategy_x, strategy_y, b):
     if (strategy_x == 2 or strategy_x == 3) and (strategy_y == 2 or strategy_y == 3):
-        return 1, 1
+        return b-1, b-1
     elif (strategy_x == 2 or strategy_x == 3) and (strategy_y == 0 or strategy_y == 1):
-        return 0, b
+        return -1, b
     elif (strategy_x == 0 or strategy_x == 1) and (strategy_y == 2 or strategy_y == 3):
-        return b, 0
+        return b, -1
     elif (strategy_x == 0 or strategy_x == 1) and (strategy_y == 0 or strategy_y == 1):
         return 0, 0
     else:

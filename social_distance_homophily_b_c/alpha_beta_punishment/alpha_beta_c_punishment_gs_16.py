@@ -28,6 +28,7 @@ class SocialStructure():
         return np.array(ind_pos), np.array(pos_ind)
 
 
+# T = b, R = b-c, P = 0, S = -c. Here, we define c = 1
 def pd_game(strategy_x, strategy_y, b):
     if (strategy_x == 1 or strategy_x == 2) and (strategy_y == 1 or strategy_y == 2):
         return b-1, b-1
@@ -83,18 +84,6 @@ def pick_individual(ind_self, positions, pos_ind):
     return int(ind_index)
 
 
-def build_rep(ind_strategy, pos_ind, group_base, group_length):
-    position_num = group_base ** (group_length - 1)
-    position_rep = [0 for x in range(position_num)]
-    for i in range(position_num):
-        co_num = 0
-        for j in pos_ind[i]:
-            if ind_strategy[j] == 1 or ind_strategy[j] == 2:
-                co_num += 1
-        position_rep[i] = co_num / len(pos_ind[i])
-    return position_rep
-
-
 def initialize_strategy(total_num):
     ind_strategy = np.random.choice([0, 1, 2], total_num, p=[0.5, 0.25, 0.25])
     return ind_strategy
@@ -110,8 +99,7 @@ def find_defectors(ind_strategy, pos_ind, group_base, group_length):
     return position_defectors
 
 
-def run_game(ind_strategy, alpha, beta, play_num, defect_param, group_size, group_base, group_length, total_num,
-             ind_pos, pos_ind, rt, rq):
+def run_game(ind_strategy, alpha, beta, play_num, defect_param, group_size, group_base, group_length, total_num, ind_pos, pos_ind):
     if total_num != len(ind_pos):
         print('Error, the sum of individuals does not correspond to total number of individuals')
     old_ind_strategy = np.zeros(total_num)
@@ -122,10 +110,6 @@ def run_game(ind_strategy, alpha, beta, play_num, defect_param, group_size, grou
     payoffs = np.zeros(total_num)
     prob_play = distance_prob(group_length, group_size, alpha)
     prob_learn = distance_prob(group_length, group_size, beta)
-    group_rep = build_rep(ind_strategy, pos_ind, group_base, group_length)
-    ind_rep = np.zeros(total_num)
-    for i in range(total_num):
-        ind_rep[i] = group_rep[ind_pos[i]]
     # generate the opponent to play the game
     for i in range(total_num):
         now_position = ind_pos[i]
@@ -142,11 +126,9 @@ def run_game(ind_strategy, alpha, beta, play_num, defect_param, group_size, grou
         player_strategy = ind_strategy[player_index]
         opponent_index = opponent_play[i]
         opponent_strategy = ind_strategy[opponent_index]
-        rep_fre = 1 / (1 + rt * math.e ** -(ind_rep[player_index] * ind_rep[opponent_index] * rq))
-        if np.random.random() < rep_fre:
-            payoffs_i, payoffs_j = pd_game(player_strategy, opponent_strategy, defect_param)
-            payoffs[player_index] += payoffs_i
-            payoffs[opponent_index] += payoffs_j
+        payoffs_i, payoffs_j = pd_game(player_strategy, opponent_strategy, defect_param)
+        payoffs[player_index] += payoffs_i
+        payoffs[opponent_index] += payoffs_j
     # player updates his strategy
     community_defectors = find_defectors(ind_strategy, pos_ind, group_base, group_length)
     for i in range(total_num):
@@ -174,27 +156,23 @@ def run_game(ind_strategy, alpha, beta, play_num, defect_param, group_size, grou
 
 
 if __name__ == "__main__":
-    group_size_r = 4
+    group_size_r = 16
     group_base_r = 2
-    group_length_r = 9
+    group_length_r = 7
     total_num_r = group_size_r * (group_base_r ** (group_length_r - 1))
     ind_pos_r, pos_ind_r = build_structure(group_size_r, group_base_r, group_length_r)
     print(ind_pos_r)
     print(pos_ind_r)
     parser = argparse.ArgumentParser(description='Set the defect parameter b')
     parser.add_argument('-d', '--defect_param', type=float, required=True, help='Set the defector parameter b')
-    parser.add_argument('-t', '--rt', type=float, required=True, help='Set the rt parameter for the use of reputation')
-    parser.add_argument('-q', '--rq', type=float, required=True, help='Set the rq parameter for the use of reputation')
     args = parser.parse_args()
     defect_param_r = args.defect_param
-    rt_r = args.rt
-    rq_r = args.rq
     play_num_r = 1
     abs_path = os.path.abspath(os.path.join(os.getcwd(), '../'))
-    dir_name = abs_path + '/results/re_alpha_beta_punishment_reputation/'
+    dir_name = abs_path + '/results/re_alpha_beta_punishment/'
     if not os.path.isdir(dir_name):
         os.makedirs(dir_name)
-    file_name = dir_name + 'frac_co_alpha_beta_c_punishment_reputation_gs_%s_d_%s.txt' % (group_size_r, defect_param_r)
+    file_name = dir_name + 'frac_co_alpha_beta_c_punishment_gs_%s_d_%s.txt' % (group_size_r, defect_param_r)
     f = open(file_name, 'w')
 
     start_time = datetime.datetime.now()
@@ -212,11 +190,11 @@ if __name__ == "__main__":
                 ind_strategy_r = initialize_strategy(total_num_r)
                 for i in range(run_time):
                     ind_strategy_r = run_game(ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
-                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r)
+                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r)
                 sample_strategy = []
                 for i in range(sample_time):
                     ind_strategy_r = run_game(ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
-                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r)
+                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r)
                     cal_strategy = np.zeros(3)
                     for i in ind_strategy_r:
                         cal_strategy[i] += 1
