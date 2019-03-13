@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import networkx as nx
 import random
 import math
@@ -43,6 +44,7 @@ class Agent:
         self.strategy = strategy
         self.ostrategy = strategy
         self.payoffs = 0
+        self.neigh_defectors = []
 
     def get_id(self):
         return self.agent_id
@@ -87,19 +89,35 @@ def initialize_population():
     # print('edges', edges)
     popu = []
     for i in range(total_num):
-        popu.append(Agent(i, network[i], random.randint(0, 1)))
+        popu.append(Agent(i, network[i], np.random.choice([0, 1, 2], p=[0.5, 0.25, 0.25])))
     return popu, network, total_num, edges
 
 
-def evolution_one_step(popu, total_num, edges, b):
+def build_rep(popu, network, total_num):
+    ind_rep = [0 for _ in range(total_num)]
+    for i in range(total_num):
+        co_num = 0
+        if popu[i].get_strategy() == 1:
+            co_num += 1
+        group_num = len(network[i]) + 1
+        for j in network[i]:
+            if popu[j].get_strategy() == 1:
+                co_num += 1
+        ind_rep[i] = co_num / group_num
+    return ind_rep
+
+
+def evolution_one_step(popu, network, total_num, edges, b, ind_rep):
     for i in range(total_num):
         popu[i].set_payoffs(0)
     for edge in edges:
         i = edge[0]
         j = edge[1]
-        r_i, r_j = pd_game(popu[i].get_strategy(), popu[j].get_strategy(), b)
-        popu[i].add_payoffs(r_i)
-        popu[j].add_payoffs(r_j)
+        rep_fre = 1 / (1 + 100 * math.e ** -(ind_rep[i] * ind_rep[j] * 8))
+        if np.random.random() < rep_fre:
+            r_i, r_j = pd_game(popu[i].get_strategy(), popu[j].get_strategy(), b)
+            popu[i].add_payoffs(r_i)
+            popu[j].add_payoffs(r_j)
     for i in range(total_num):
         popu[i].set_ostrategy()
     for i in range(total_num):
@@ -108,51 +126,56 @@ def evolution_one_step(popu, total_num, edges, b):
     return popu
 
 
-def run(b):
+def run(b, ind_rep):
     run_time = 50
     popu, network, total_num, edges = initialize_population()
+
     for _ in range(run_time):
-        popu = evolution_one_step(popu, total_num, edges, b)
+        popu = evolution_one_step(popu, network, total_num, edges, b, ind_rep)
     return popu, network, total_num, edges
 
 
-def evaluation(popu, edges, b):
+def evaluation(popu, network, edges, b, punishment_cost):
     sample_time = 10
     sample_strategy = []
     total_num = len(popu)
     for _ in range(sample_time):
-        popu = evolution_one_step(popu, total_num, edges, b)
-        strategy = []
+        popu = evolution_one_step(popu, network, total_num, edges, b, punishment_cost)
+        cal_strategy = np.zeros(3)
         for i in range(total_num):
-            strategy.append(popu[i].get_strategy())
-        sample_strategy.append(np.mean(strategy))
-    return np.mean(sample_strategy)
+            cal_strategy[popu[i].get_strategy()] += 1
+        cal_strategy = cal_strategy / total_num
+        sample_strategy.append(cal_strategy)
+    return np.mean(sample_strategy, axis=0)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Set the defect parameter b')
     parser.add_argument('-d', '--defect_param', type=float, required=True, help='Set the defector parameter b')
+    parser.add_argument('-p', '--punishment_cost_param', type=float, required=True, help='Set the punishment cost parameter')
     args = parser.parse_args()
     defect_param_r = args.defect_param
+    punishment_cost_r = args.punishment_cost_param
     rounds_r = 5
-    result_r = []
     abs_path = os.path.abspath(os.path.join(os.getcwd(), '../'))
     dir_name = abs_path + '/results/re_comparison/'
     if not os.path.isdir(dir_name):
         os.makedirs(dir_name)
-    file_name = dir_name + 'frac_co_comparison_lattice_original_d_%s.txt' % defect_param_r
+    file_name = dir_name + 'frac_co_comparison_lattice_c_punishment_cost_%s_d_%s.txt' % (punishment_cost_r, defect_param_r)
     f = open(file_name, 'w')
     start_time = datetime.datetime.now()
     print(start_time)
+    round_results_r = []
     for _ in range(rounds_r):
         print(_)
-        population_r, network_r, total_number_r, edges_r = run(defect_param_r)
-        result_r.append(evaluation(population_r, edges_r, defect_param_r))
+        population_r, network_r, total_number_r, edges_r = run(defect_param_r, punishment_cost_r)
+        round_results_r.append(evaluation(population_r, network_r, edges_r, defect_param_r, punishment_cost_r))
+    results_r = np.mean(round_results_r, axis=0)
+    results_r_pd = pd.DataFrame(results_r)
+    print(results_r)
+    results_r_pd.to_csv(f)
     end_time = datetime.datetime.now()
     print(end_time)
     print(end_time - start_time)
-    frac_co = np.mean(result_r)
-    print("The fraction of cooperators is ", frac_co)
-    f.write(str(defect_param_r) + ', ' + str(frac_co))
 
 
