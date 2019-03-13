@@ -88,13 +88,13 @@ def initialize_strategy(total_num):
     return ind_strategy
 
 
-def build_rep(ind_old_strategy, pos_ind, group_base, group_length):
+def build_rep(ind_strategy, pos_ind, group_base, group_length):
     position_num = group_base ** (group_length - 1)
     position_rep = [0 for x in range(position_num)]
     for i in range(position_num):
         co_num = 0 # co_num -> the number of cooperators in position i
         for j in pos_ind[i]:
-            if ind_old_strategy[j] == 1:
+            if ind_strategy[j] == 1:
                 co_num += 1
         position_rep[i] = co_num / len(pos_ind[i])
     return position_rep
@@ -191,12 +191,12 @@ if __name__ == "__main__":
             round_results_r = np.zeros(rounds)
             for round_index in range(rounds):
                 ind_strategy_r = initialize_strategy(total_num_r)
-                for i in range(run_time):
-                    ind_strategy_r = run_game(i, ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
+                for step_i in range(run_time):
+                    ind_strategy_r = run_game(step_i, ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
                                               group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r)
                 sample_strategy = []
-                for i in range(sample_time):
-                    ind_strategy_r = run_game(run_time+i, ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
+                for step_i in range(sample_time):
+                    ind_strategy_r = run_game(run_time+step_i, ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
                                               group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r)
                     sample_strategy.append(np.mean(ind_strategy_r))
                 round_results_r[round_index] = np.mean(sample_strategy)

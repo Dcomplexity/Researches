@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import random
 import math
 import argparse
@@ -27,13 +28,12 @@ class SocialStructure():
         return np.array(ind_pos), np.array(pos_ind)
 
 
-# T = b, R = b-c, P = 0, S = -c. Here, we define c = 1
 def pd_game(strategy_x, strategy_y, b):
-    if strategy_x == 1 and strategy_y == 1:
+    if (strategy_x == 1 or strategy_x == 2) and (strategy_y == 1 or strategy_y == 2):
         return b-1, b-1
-    elif strategy_x == 1 and strategy_y == 0:
+    elif (strategy_x == 1 or strategy_x == 2) and strategy_y == 0:
         return -1, b
-    elif strategy_x == 0 and strategy_y == 1:
+    elif strategy_x == 0 and (strategy_y == 1 or strategy_y == 2):
         return b, -1
     elif strategy_x == 0 and strategy_y == 0:
         return 0, 0
@@ -83,25 +83,35 @@ def pick_individual(ind_self, positions, pos_ind):
     return int(ind_index)
 
 
-def initialize_strategy(total_num):
-    ind_strategy = np.random.choice([0, 1], total_num, p=[0.5, 0.5])
-    return ind_strategy
-
-
 def build_rep(ind_strategy, pos_ind, group_base, group_length):
     position_num = group_base ** (group_length - 1)
     position_rep = [0 for x in range(position_num)]
     for i in range(position_num):
-        co_num = 0 # co_num -> the number of cooperators in position i
+        co_num = 0
         for j in pos_ind[i]:
-            if ind_strategy[j] == 1:
+            if ind_strategy[j] == 1 or ind_strategy[j] == 2:
                 co_num += 1
         position_rep[i] = co_num / len(pos_ind[i])
     return position_rep
 
 
+def initialize_strategy(total_num):
+    ind_strategy = np.random.choice([0, 1, 2], total_num, p=[0.5, 0.25, 0.25])
+    return ind_strategy
+
+
+def find_defectors(ind_strategy, pos_ind, group_base, group_length):
+    position_num = group_base ** (group_length - 1)
+    position_defectors = [[] for x in range(position_num)]
+    for i in range(position_num):
+        for j in pos_ind[i]:
+            if ind_strategy[j] == 0:
+                position_defectors[i].append(j)
+    return position_defectors
+
+
 def run_game(step, ind_strategy, alpha, beta, play_num, defect_param, group_size, group_base, group_length, total_num,
-             ind_pos, pos_ind, rt, rq):
+             ind_pos, pos_ind, rt, rq, punishment_cost):
     if total_num != len(ind_pos):
         print('Error, the sum of individuals does not correspond to total number of individuals')
     old_ind_strategy = np.zeros(total_num)
@@ -135,15 +145,24 @@ def run_game(step, ind_strategy, alpha, beta, play_num, defect_param, group_size
             payoffs[player_index] += payoffs_i
             payoffs[opponent_index] += payoffs_j
     # player updates his strategy
+    community_defectors = find_defectors(ind_strategy, pos_ind, group_base, group_length)
+    for i in range(total_num):
+        if ind_strategy[i] == 2:
+            i_position = ind_pos[i]
+            i_community_defectors = community_defectors[i_position]
+            num_defectors = len(i_community_defectors)
+            if num_defectors > 0:
+                payoffs[i] = payoffs[i] - punishment_cost
+                for j in i_community_defectors:
+                    payoffs[j] = payoffs[j] - 1.0 / num_defectors
     for i in range(total_num):
         player_index = i
         w1 = 0.01
         w2 = random.random()
         if w1 > w2:
-            if ind_strategy[player_index] == 1:
-                ind_strategy[player_index] = 0
-            else:
-                ind_strategy[player_index] = 1
+            potential_strategy = [0, 1, 2]
+            potential_strategy.remove(old_ind_strategy[i])
+            ind_strategy[i] = np.random.choice(potential_strategy)
         else:
             opponent_index = opponent_learn[i]
             t1 = 1 / (1 + math.e ** (10 * (payoffs[player_index] - payoffs[opponent_index])))
@@ -157,9 +176,9 @@ def run_game(step, ind_strategy, alpha, beta, play_num, defect_param, group_size
 
 
 if __name__ == "__main__":
-    group_size_r = 4
+    group_size_r = 16
     group_base_r = 2
-    group_length_r = 9
+    group_length_r = 7
     total_num_r = group_size_r * (group_base_r ** (group_length_r - 1))
     ind_pos_r, pos_ind_r = build_structure(group_size_r, group_base_r, group_length_r)
     print(ind_pos_r)
@@ -168,16 +187,18 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--defect_param', type=float, required=True, help='Set the defector parameter b')
     parser.add_argument('-t', '--rt', type=float, required=True, help='Set the rt parameter for the use of reputation')
     parser.add_argument('-q', '--rq', type=float, required=True, help='Set the rq parameter for the use of reputation')
+    parser.add_argument('-p', '--punishment_cost_param', type=float, required=True, help='Set the punishment cost')
     args = parser.parse_args()
     defect_param_r = args.defect_param
     rt_r = args.rt
     rq_r = args.rq
+    punishment_cost_r = args.punishment_cost_param
     play_num_r = 1
     abs_path = os.path.abspath(os.path.join(os.getcwd(), '../'))
-    dir_name = abs_path + '/results/re_alpha_beta_old_strategy_reputation/'
+    dir_name = abs_path + '/results/re_alpha_beta_punishment_cost_old_strategy_reputation/'
     if not os.path.isdir(dir_name):
         os.makedirs(dir_name)
-    file_name = dir_name + 'frac_co_alpha_beta_old_strategy_reputation_gs_%s_d_%s.txt' % (group_size_r, defect_param_r)
+    file_name = dir_name + 'frac_co_alpha_beta_c_punishment_%s_old_strategy_reputation_gs_%s_d_%s.txt' % (punishment_cost_r, group_size_r, defect_param_r)
     f = open(file_name, 'w')
 
     start_time = datetime.datetime.now()
@@ -185,26 +206,32 @@ if __name__ == "__main__":
     sample_time = 10
     rounds = 5
     results_r = []
+    alpha_beta_index = []
     for alpha_r in range(-2, 3):
         for beta_r in range(-2, 3):
+            alpha_beta_index.append((alpha_r, beta_r))
             print(alpha_r, beta_r)
-            round_results_r = np.zeros(rounds)
+            round_results_r = []
             for round_index in range(rounds):
                 ind_strategy_r = initialize_strategy(total_num_r)
                 for step_i in range(run_time):
                     ind_strategy_r = run_game(step_i, ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
-                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r)
+                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r, punishment_cost_r)
                 sample_strategy = []
                 for step_i in range(sample_time):
                     ind_strategy_r = run_game(run_time+step_i, ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
-                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r)
-                    sample_strategy.append(np.mean(ind_strategy_r))
-                round_results_r[round_index] = np.mean(sample_strategy)
-            final_results = np.mean(round_results_r)
-            results_r.append(final_results)
-            f.write(str(alpha_r) + '\t' + str(beta_r) + '\t' + str(final_results) + '\n')
+                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r, punishment_cost_r)
+                    cal_strategy = np.zeros(3)
+                    for str_i in ind_strategy_r:
+                        cal_strategy[str_i] += 1
+                    cal_strategy = cal_strategy / total_num_r
+                    sample_strategy.append(cal_strategy)
+                round_results_r.append(np.mean(sample_strategy, axis=0))
+            results_r.append(np.mean(round_results_r, axis=0))
+    results_r_pd = pd.DataFrame(results_r, index=alpha_beta_index)
+    results_r_pd.to_csv(f)
     f.close()
     end_time = datetime.datetime.now()
     print(results_r)
+    print(results_r_pd)
     print(end_time - start_time)
-
