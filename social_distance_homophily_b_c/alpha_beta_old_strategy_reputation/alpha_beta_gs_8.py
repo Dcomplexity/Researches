@@ -100,7 +100,7 @@ def build_rep(ind_strategy, pos_ind, group_base, group_length):
     return position_rep
 
 
-def run_game(step, ind_strategy, alpha, beta, play_num, defect_param, group_size, group_base, group_length, total_num,
+def run_game(step, ind_rep, ind_strategy, alpha, beta, play_num, defect_param, group_size, group_base, group_length, total_num,
              ind_pos, pos_ind, rt, rq):
     if total_num != len(ind_pos):
         print('Error, the sum of individuals does not correspond to total number of individuals')
@@ -112,7 +112,6 @@ def run_game(step, ind_strategy, alpha, beta, play_num, defect_param, group_size
     payoffs = np.zeros(total_num)
     prob_play = distance_prob(group_length, group_size, alpha)
     prob_learn = distance_prob(group_length, group_size, beta)
-    ind_rep = np.zeros(total_num)
     # generate the opponent to play the game
     for i in range(total_num):
         now_position = ind_pos[i]
@@ -153,7 +152,7 @@ def run_game(step, ind_strategy, alpha, beta, play_num, defect_param, group_size
     group_rep = build_rep(old_ind_strategy, pos_ind, group_base, group_length)
     for i in range(total_num):
         ind_rep[i] = group_rep[ind_pos[i]]
-    return ind_strategy
+    return ind_rep, ind_strategy
 
 
 if __name__ == "__main__":
@@ -191,12 +190,13 @@ if __name__ == "__main__":
             round_results_r = np.zeros(rounds)
             for round_index in range(rounds):
                 ind_strategy_r = initialize_strategy(total_num_r)
+                ind_rep_r = np.zeros(total_num_r)
                 for step_i in range(run_time):
-                    ind_strategy_r = run_game(step_i, ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
+                    ind_rep_r, ind_strategy_r = run_game(step_i, ind_rep_r, ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
                                               group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r)
                 sample_strategy = []
                 for step_i in range(sample_time):
-                    ind_strategy_r = run_game(run_time+step_i, ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
+                    ind_rep_r, ind_strategy_r = run_game(run_time+step_i, ind_rep_r, ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
                                               group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r)
                     sample_strategy.append(np.mean(ind_strategy_r))
                 round_results_r[round_index] = np.mean(sample_strategy)
