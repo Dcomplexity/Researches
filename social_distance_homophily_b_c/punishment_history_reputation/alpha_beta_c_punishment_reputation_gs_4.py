@@ -215,14 +215,14 @@ if __name__ == "__main__":
             round_results_r = []
             for round_index in range(rounds):
                 ind_strategy_r = initialize_strategy(total_num_r)
-                ind_rep_r = np.zeros(total_num_r)
+                ind_rep_r = np.ones(total_num_r)
                 for step_i in range(run_time):
                     ind_rep_r, ind_strategy_r = run_game(step_i, ind_rep_r, ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
-                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r, punishment_cost_r)
+                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r, punishment_cost_r, gamma_r)
                 sample_strategy = []
                 for step_i in range(sample_time):
                     ind_rep_r, ind_strategy_r = run_game(run_time+step_i, ind_rep_r, ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
-                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r, punishment_cost_r)
+                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r, punishment_cost_r, gamma_r)
                     cal_strategy = np.zeros(3)
                     for str_i in ind_strategy_r:
                         cal_strategy[str_i] += 1

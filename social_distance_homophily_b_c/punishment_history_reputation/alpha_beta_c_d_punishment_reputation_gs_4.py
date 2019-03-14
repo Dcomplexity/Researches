@@ -112,7 +112,7 @@ def find_defectors(ind_strategy, pos_ind, group_base, group_length):
 
 
 def run_game(step, ind_rep, ind_strategy, alpha, beta, play_num, defect_param, group_size, group_base, group_length, total_num,
-             ind_pos, pos_ind, rt, rq, punishment_cost):
+             ind_pos, pos_ind, rt, rq, punishment_cost, gamma_r):
     if total_num != len(ind_pos):
         print('Error, the sum of individuals does not correspond to total number of individuals')
     old_ind_strategy = np.zeros(total_num)
@@ -180,7 +180,7 @@ def run_game(step, ind_rep, ind_strategy, alpha, beta, play_num, defect_param, g
                 ind_strategy[player_index] = old_ind_strategy[opponent_index]
     group_rep = build_rep(old_ind_strategy, pos_ind, group_base, group_length)
     for i in range(total_num):
-        ind_rep[i] = group_rep[ind_pos[i]]
+        ind_rep[i] = ind_rep[i] + gamma_r * (group_rep[ind_pos[i]] - ind_rep[i])
     return ind_rep, ind_strategy
 
 
@@ -197,17 +197,19 @@ if __name__ == "__main__":
     parser.add_argument('-t', '--rt', type=float, required=True, help='Set the rt parameter for the use of reputation')
     parser.add_argument('-q', '--rq', type=float, required=True, help='Set the rq parameter for the use of reputation')
     parser.add_argument('-p', '--punishment_cost_param', type=float, required=True, help='Set the punishment cost')
+    parser.add_argument('-g', '--gamma', type=float, required=True, help='Set the gamma parameter for history')
     args = parser.parse_args()
     defect_param_r = args.defect_param
     rt_r = args.rt
     rq_r = args.rq
     punishment_cost_r = args.punishment_cost_param
+    gamma_r = args.gamma
     play_num_r = 1
     abs_path = os.path.abspath(os.path.join(os.getcwd(), '../'))
-    dir_name = abs_path + '/results/re_alpha_beta_punishment_cost_old_strategy_reputation/'
+    dir_name = abs_path + '/results/re_punishment_history_reputation/'
     if not os.path.isdir(dir_name):
         os.makedirs(dir_name)
-    file_name = dir_name + 'frac_co_alpha_beta_c_d_punishment_%s_old_strategy_reputation_gs_%s_d_%s.txt' % (punishment_cost_r, group_size_r, defect_param_r)
+    file_name = dir_name + 'frac_c_d_punishment_%s_reputation_gs_%s_d_%s_g_%s.txt' % (punishment_cost_r, group_size_r, defect_param_r, gamma_r)
     f = open(file_name, 'w')
 
     start_time = datetime.datetime.now()
@@ -223,14 +225,14 @@ if __name__ == "__main__":
             round_results_r = []
             for round_index in range(rounds):
                 ind_strategy_r = initialize_strategy(total_num_r)
-                ind_rep_r = np.zeros(total_num_r)
+                ind_rep_r = np.ones(total_num_r)
                 for step_i in range(run_time):
                     ind_rep_r, ind_strategy_r = run_game(step_i, ind_rep_r, ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
-                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r, punishment_cost_r)
+                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r, punishment_cost_r, gamma_r)
                 sample_strategy = []
                 for step_i in range(sample_time):
                     ind_rep_r, ind_strategy_r = run_game(run_time+step_i, ind_rep_r, ind_strategy_r, alpha_r, beta_r, play_num_r, defect_param_r, group_size_r,
-                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r, punishment_cost_r)
+                                              group_base_r, group_length_r, total_num_r, ind_pos_r, pos_ind_r, rt_r, rq_r, punishment_cost_r, gamma_r)
                     cal_strategy = np.zeros(4)
                     for str_i in ind_strategy_r:
                         cal_strategy[str_i] += 1
