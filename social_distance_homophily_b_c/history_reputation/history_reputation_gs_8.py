@@ -161,9 +161,9 @@ def run_game(step, ind_rep, ind_strategy, alpha, beta, play_num, defect_param, g
 
 
 if __name__ == "__main__":
-    group_size_r = 4
+    group_size_r = 8
     group_base_r = 2
-    group_length_r = 9
+    group_length_r = 8
     total_num_r = group_size_r * (group_base_r ** (group_length_r - 1))
     ind_pos_r, pos_ind_r = build_structure(group_size_r, group_base_r, group_length_r)
     print(ind_pos_r)
