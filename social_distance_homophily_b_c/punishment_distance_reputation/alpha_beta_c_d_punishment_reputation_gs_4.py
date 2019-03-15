@@ -206,7 +206,7 @@ if __name__ == "__main__":
     punishment_cost_r = args.punishment_cost_param
     play_num_r = 1
     abs_path = os.path.abspath(os.path.join(os.getcwd(), '../'))
-    dir_name = abs_path + '/results/re_alpha_beta_punishment_distance_reputation/'
+    dir_name = abs_path + '/results/re_punishment_distance_reputation/'
     if not os.path.isdir(dir_name):
         os.makedirs(dir_name)
     file_name = dir_name + 'frac_co_c_d_punishment_%s_distance_reputation_gs_%s_d_%s.txt' % (punishment_cost_r, group_size_r, defect_param_r)
