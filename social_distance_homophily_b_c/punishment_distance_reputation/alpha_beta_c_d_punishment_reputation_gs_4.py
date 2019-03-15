@@ -69,7 +69,7 @@ def get_position(group_length, now_position, distance_prob):
         pos_temp = 2 ** (distance - 1)
         for k in range(0, pos_temp):
             potential_pos.append((now_position // pos_temp) * pos_temp + k)
-    return np.array(potential_pos)
+    return distance, np.array(potential_pos)
 
 
 def pick_individual(ind_self, positions, pos_ind):
@@ -123,15 +123,17 @@ def run_game(step, ind_rep, ind_strategy, alpha, beta, play_num, defect_param, g
     payoffs = np.zeros(total_num)
     prob_play = distance_prob(group_length, group_size, alpha)
     prob_learn = distance_prob(group_length, group_size, beta)
+    opponent_distance = np.zeros(total_num)
     # generate the opponent to play the game
     for i in range(total_num):
         now_position = ind_pos[i]
-        potential_pos = get_position(group_length, now_position, prob_play)
+        potential_distance, potential_pos = get_position(group_length, now_position, prob_play)
+        opponent_distance[i] = potential_distance
         opponent_play[i] = pick_individual(i, potential_pos, pos_ind)
     # generate the opponent from whom learn
     for i in range(total_num):
         now_position = ind_pos[i]
-        potential_pos = get_position(group_length, now_position, prob_learn)
+        potential_distance, potential_pos = get_position(group_length, now_position, prob_learn)
         opponent_learn[i] = pick_individual(i, potential_pos, pos_ind)
     # every player plays the game with an opponent
     for i in range(total_num):
@@ -139,7 +141,7 @@ def run_game(step, ind_rep, ind_strategy, alpha, beta, play_num, defect_param, g
         player_strategy = ind_strategy[player_index]
         opponent_index = opponent_play[i]
         opponent_strategy = ind_strategy[opponent_index]
-        rep_fre = 1 / (1 + rt * math.e ** -(ind_rep[player_index] * ind_rep[opponent_index] * rq))
+        rep_fre = 1 / (1 + (opponent_distance[i] - 1) * rt * math.e ** -(ind_rep[player_index] * ind_rep[opponent_index] * rq))
         if np.random.random() < rep_fre or step == 0:
             payoffs_i, payoffs_j = pd_game(player_strategy, opponent_strategy, defect_param)
             payoffs[player_index] += payoffs_i
@@ -204,10 +206,10 @@ if __name__ == "__main__":
     punishment_cost_r = args.punishment_cost_param
     play_num_r = 1
     abs_path = os.path.abspath(os.path.join(os.getcwd(), '../'))
-    dir_name = abs_path + '/results/re_alpha_beta_punishment_cost_old_strategy_reputation/'
+    dir_name = abs_path + '/results/re_alpha_beta_punishment_distance_reputation/'
     if not os.path.isdir(dir_name):
         os.makedirs(dir_name)
-    file_name = dir_name + 'frac_co_alpha_beta_c_d_punishment_%s_old_strategy_reputation_gs_%s_d_%s.txt' % (punishment_cost_r, group_size_r, defect_param_r)
+    file_name = dir_name + 'frac_co_c_d_punishment_%s_distance_reputation_gs_%s_d_%s.txt' % (punishment_cost_r, group_size_r, defect_param_r)
     f = open(file_name, 'w')
 
     start_time = datetime.datetime.now()
