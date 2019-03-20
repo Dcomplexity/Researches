@@ -14,7 +14,6 @@ class SocialStructure():
         self.group_length = group_length
         self.total_num = total_num
         self.group_num = self.group_base ** (self.group_length - 1)
-
         if self.total_num != self.group_size * (self.group_base ** (self.group_length - 1)):
             print("Error: The total num of individuals does not correspond to the social structure")
 
