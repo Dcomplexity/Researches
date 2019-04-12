@@ -13,7 +13,7 @@ def game_env_feedback(a_x, a_y):
     return r_x, r_y, s_
 
 
-def play_one_game(agent_x=AgentQ, agent_y=AgentFixedStrategy):
+def play_one_game(agent_x: AgentQ, agent_y: AgentFixedStrategy):
     actions = gen_actions()
     states = gen_states(actions)
     s = np.random.randint(0, 2, (2, 1))
@@ -25,8 +25,8 @@ def play_one_game(agent_x=AgentQ, agent_y=AgentFixedStrategy):
     random_ep = 20
     while ep < whole_ep:
         if ep % random_ep == 0:
-            a_x = np.random.choice(actions)
-            a_y = np.random.choice(actions)
+            a_x = random.choice(actions)
+            a_y = random.choice(actions)
             s = (a_x, a_y)
         q_table_history.append(agent_x.get_q_table().copy())
         a_x = agent_x.choose_action(s)
@@ -40,7 +40,7 @@ def play_one_game(agent_x=AgentQ, agent_y=AgentFixedStrategy):
     return q_table_history
 
 
-def run_game(agent_x=AgentQ, agent_y=AgentFixedStrategy):
+def run_game(agent_x: AgentQ, agent_y: AgentFixedStrategy):
     run_game_result = play_one_game(agent_x, agent_y)
     return run_game_result
 

@@ -13,7 +13,7 @@ def game_env_feedback(a_x, a_y):
     return r_x, r_y, s_
 
 
-def play_one_game(agent_x=AgentPHC, agent_y=AgentFixedStrategy):
+def play_one_game(agent_x: AgentPHC, agent_y: AgentFixedStrategy):
     actions = gen_actions()
     states = gen_states(actions)
     s = np.random.randint(0, 2, (2, 1))
@@ -27,16 +27,17 @@ def play_one_game(agent_x=AgentPHC, agent_y=AgentFixedStrategy):
     whole_ep = 10e5
     random_ep = 20
     while ep < whole_ep:
+        print(ep)
         if ep % random_ep == 0:
-            a_x = np.random.choice(actions)
-            a_y = np.random.choice(actions)
+            a_x = random.choice(actions)
+            a_y = random.choice(actions)
             s = (a_x, a_y)
         s_history.append(agent_x.get_strategy().copy())
         a_x = agent_x.choose_action(s)
         a_y = agent_y.choose_action(s)
         r_x, r_y, s_ = game_env_feedback(a_x, a_y)
         agent_x.update_q_table(s, a_x, r_x, s_)
-        agent_x.update_strategy(s)
+        agent_x.update_strategy(s, None)
         ep += 1
         agent_x.set_alpha(ep)  # alpha (learning rate) change with time
         agent_x.set_epsilon(ep)  # epsilon (choose action randomly) change with time
@@ -44,7 +45,7 @@ def play_one_game(agent_x=AgentPHC, agent_y=AgentFixedStrategy):
     return s_history
 
 
-def run_game(agent_x=AgentPHC, agent_y=AgentFixedStrategy):
+def run_game(agent_x: AgentPHC, agent_y: AgentFixedStrategy):
     run_game_result = play_one_game(agent_x, agent_y)
     return run_game_result
 
@@ -75,6 +76,7 @@ def pandas_result(result):
 
 def write_res(f, result):
     abs_path = os.getcwd()
+    print(abs_path)
     dir_name = abs_path + '/files/results/'
     if not os.path.isdir(dir_name):
         os.makedirs(dir_name)

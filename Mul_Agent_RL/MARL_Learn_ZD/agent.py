@@ -1,21 +1,17 @@
 import numpy as np
 import pandas as pd
+import random
 from game_env import *
 
 
 class Agent:
-    def __init__(self, alpha, gamma, epsilon):
+    def __init__(self, alpha=None, gamma=None, epsilon=None):
         self.time_step = 0
         self.alpha = alpha
         self.gamma = gamma
         self.epsilon = epsilon
-        # self.s = []  # current state
-        # self.s_ = []  # next state
-        # self.r = 0  # reward
-        # self.a = 0  # current Action
         self.actions = gen_actions()
         self.states = gen_states(self.actions)
-        # print(self.states)
         self.q_table = {}
         self.strategy = {}
 
@@ -51,10 +47,10 @@ class Agent:
         Initialize strategy, in each states, play each action by the same probability.
         :return:
         """
-        len_actions = self.actions.shape[0]
+        len_actions = len(self.actions)
         initial_value = 1.0 / len_actions
         for i in self.states:
-            self.strategy[i] = np.zeros(len_actions)
+            self.strategy[i] = [0 for _ in range(len_actions)]
             for j in range(len_actions):
                 self.strategy[i][j] = initial_value
 
@@ -63,8 +59,9 @@ class Agent:
         Initialize the qTable to all zeros.
         :return:
         """
+        len_actions = len(self.actions)
         for i in self.states:
-            self.q_table[i] = np.zeros(self.actions.shape[0])
+            self.q_table[i] = [0.0 for _ in range(len_actions)]
 
     # def check_state_exist(self, s):
     #     if s not in self.q_table.index:
@@ -83,7 +80,7 @@ class Agent:
         # Q-learning methods
         # self.check_state_exist(s_)
         q_predict = self.q_table[s][a]
-        q_target = r + self.gamma * np.amax(self.q_table[s_])
+        q_target = r + self.gamma * max(self.q_table[s_])
         self.q_table[s][a] += self.alpha * (q_target - q_predict)  # update
 
     def update_strategy(self, s, a):
@@ -94,14 +91,15 @@ class Agent:
 
 
 class AgentFixedStrategy(Agent):
-    def __init__(self, alpha, gamma, epsilon, fixed_strategy):
+    def __init__(self, alpha=None, gamma=None, epsilon=None, fixed_strategy=None):
         Agent.__init__(self, alpha, gamma, epsilon)
-        self.strategy_vector = np.array(fixed_strategy)
+        self.strategy_vector = fixed_strategy
         print(self.strategy_vector)
 
     def initial_strategy(self):
+        len_actions = len(self.actions)
         for i in self.states:
-            self.strategy[i] = np.zeros(self.actions.shape[0])
+            self.strategy[i] = [0 for _ in range(len_actions)]
         self.strategy[(1, 1)][0] = 1 - self.strategy_vector[0]
         self.strategy[(1, 1)][1] = self.strategy_vector[0]
         self.strategy[(1, 0)][0] = 1 - self.strategy_vector[1]
@@ -117,7 +115,7 @@ class AgentFixedStrategy(Agent):
 
 
 class AgentQ(Agent):
-    def __init__(self, alpha, gamma, epsilon):
+    def __init__(self, alpha=None, gamma=None, epsilon=None):
         Agent.__init__(self, alpha, gamma, epsilon)
 
     def choose_action(self, ob):
@@ -128,7 +126,7 @@ class AgentQ(Agent):
 
 
 class AgentPHC(Agent):
-    def __init__(self, alpha, gamma, epsilon, delta):
+    def __init__(self, alpha=None, gamma=None, epsilon=None, delta=None):
         Agent.__init__(self, alpha, gamma, epsilon)
         self.delta = delta
         self.delta_table = {}
@@ -139,8 +137,9 @@ class AgentPHC(Agent):
         Initialize the delta_table to all zeros.
         :return:
         """
+        len_actions = len(self.actions)
         for i in self.states:
-            self.delta_table[i] = np.zeros(self.actions.shape[0])
+            self.delta_table[i] = np.zeros(len_actions)
         # print(self.delta_table)
 
     def initial_delta_top(self):
@@ -148,8 +147,9 @@ class AgentPHC(Agent):
         Initialize the delta_top_table to all zeros.
         :return:
         """
+        len_actions = len(self.actions)
         for i in self.states:
-            self.delta_top_table[i] = np.zeros(self.actions.shape[0])
+            self.delta_top_table[i] = np.zeros(len_actions)
 
     def choose_action(self, ob):
         """
@@ -159,16 +159,16 @@ class AgentPHC(Agent):
         action: the chosen action
         """
         if np.random.binomial(1, self.epsilon) == 1:
-            a = np.random.choice(self.actions, size=1)[0]
+            a = np.random.choice(self.actions)
         else:
             a = np.random.choice(self.actions, size=1, p=self.strategy[ob])[0]
         return a
 
-    def update_strategy(self, s):
+    def update_strategy(self, s, a):
         max_a = np.random.choice(np.argwhere(self.q_table[s] == np.amax(self.q_table[s]))[0])
-        len_a = self.actions.shape[0]
+        len_a = len(self.actions)
         for j in range(len_a):
-            self.delta_table[s][j] = np.amin(np.array([self.strategy[s][j], self.delta / (len_a - 1)]))
+            self.delta_table[s][j] = min(np.array([self.strategy[s][j], self.delta / (len_a - 1)]))
         # print(self.delta_table)
         sum_delta = 0.0
         for act_i in [act_j for act_j in self.actions if act_j != max_a]:
