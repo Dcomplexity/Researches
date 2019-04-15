@@ -3,8 +3,8 @@ import os
 import datetime
 
 
-from agent import *
-from game_env import *
+from PHC_Model.agent import *
+from PHC_Model.game_env import *
 
 
 def game_env_feedback(a_x, a_y):
