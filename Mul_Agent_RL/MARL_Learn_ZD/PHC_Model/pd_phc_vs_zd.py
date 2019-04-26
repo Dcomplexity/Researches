@@ -4,9 +4,8 @@ import pandas as pd
 import os
 import datetime
 
-
-from PHC_Model.agent import *
-from PHC_Model.game_env import *
+from agent import *
+from game_env import *
 
 
 def game_env_feedback(a_x, a_y):

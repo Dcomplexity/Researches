@@ -1,4 +1,5 @@
-from PHC_Model.game_env import *
+import numpy as np
+from game_env import gen_actions, gen_states, alpha_time
 
 
 class Agent:
@@ -204,6 +205,3 @@ if __name__ == "__main__":
     # # C.initial_delta_top()
     # # print(C.delta_table)
     # # C.update_strategy((0, 1), 1)
-
-
-        
