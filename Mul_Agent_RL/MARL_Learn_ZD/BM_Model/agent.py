@@ -1,4 +1,4 @@
-from BM_Model.game_env import *
+from BM_Model.game_env import gen_actions
 import random
 
 
