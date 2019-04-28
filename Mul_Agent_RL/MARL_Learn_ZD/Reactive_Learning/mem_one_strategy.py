@@ -8,6 +8,3 @@ for i in range(2):
     for j in range(2):
         state.append([i,j])
 for i in state:
-
-
-
