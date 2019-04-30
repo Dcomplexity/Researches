@@ -46,7 +46,6 @@ if __name__ == '__main__':
     plt.ylim(bottom=0, top=5)
     plt.scatter(payoff_pair[:, 1], payoff_pair[:, 0], s=3.0)
     plt.savefig("mem_one_strategy.png")
-    plt.show()
 
 
 
