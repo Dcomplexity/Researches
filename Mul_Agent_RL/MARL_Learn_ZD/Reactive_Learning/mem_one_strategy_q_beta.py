@@ -31,10 +31,10 @@ if __name__ == '__main__':
     q_payoff_set = np.array([3, 5, 0, 1])
     # p_strategy = [11.0 / 13.0, 1.0 / 2.0, 7.0 / 26.0, 0.0]
     p_strategy = [0.7881, 0.8888, 0.4686, 0.0792]
-    for i_0 in np.arange(0.0, 1.01, 0.01):
+    for _ in np.arange(10e5):
         print(time)
         time += 1
-        q_strategy = [i_0, 0.9963, 0.0166, 0.9879]
+        q_strategy = np.random.beta(0.5, 0.5, 4)
         steady_state = mem_one_strategpy(p_strategy, q_strategy, 50)
         p_payoff = cal_payoff(steady_state, p_payoff_set)
         q_payoff = cal_payoff(steady_state, q_payoff_set)
@@ -44,9 +44,5 @@ if __name__ == '__main__':
     plt.ylim(bottom=0, top=5)
     # s = [2*n for n in range(len(payoff_pair))]
     plt.scatter(payoff_pair[:, 1], payoff_pair[:, 0], s=2.0, c='black')
-    plt.savefig("./images/mem_one_strategy_qcc.png")
+    plt.savefig("./images/mem_one_strategy_q_beta.png")
     plt.show()
-
-
-
-
