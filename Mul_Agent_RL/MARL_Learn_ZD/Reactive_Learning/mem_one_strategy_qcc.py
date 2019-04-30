@@ -29,23 +29,22 @@ if __name__ == '__main__':
     time = 0
     p_payoff_set = np.array([3, 0, 5, 1])
     q_payoff_set = np.array([3, 5, 0, 1])
+    # p_strategy = [11.0 / 13.0, 1.0 / 2.0, 7.0 / 26.0, 0.0]
     p_strategy = [0.7881, 0.8888, 0.4686, 0.0792]
-    for i_0 in np.arange(0.0, 1.01, 0.02):
-        for i_1 in np.arange(0.0, 1.01, 0.02):
-            for i_2 in np.arange(0.0, 1.01, 0.02):
-                for i_3 in np.arange(0.0, 1.01, 0.02):
-                    print(time)
-                    time += 1
-                    q_strategy = [i_0, i_1, i_2, i_3]
-                    steady_state = mem_one_strategpy(p_strategy, q_strategy, 50)
-                    p_payoff = cal_payoff(steady_state, p_payoff_set)
-                    q_payoff = cal_payoff(steady_state, q_payoff_set)
-                    payoff_pair.append([p_payoff, q_payoff])
+    for i_0 in np.arange(0.0, 1.01, 0.01):
+        print(time)
+        time += 1
+        q_strategy = [i_0, 0.9963, 0.0166, 0.9879]
+        steady_state = mem_one_strategpy(p_strategy, q_strategy, 50)
+        p_payoff = cal_payoff(steady_state, p_payoff_set)
+        q_payoff = cal_payoff(steady_state, q_payoff_set)
+        payoff_pair.append([p_payoff, q_payoff])
     payoff_pair = np.array(payoff_pair)
     plt.xlim(left=0, right=5)
     plt.ylim(bottom=0, top=5)
-    plt.scatter(payoff_pair[:, 1], payoff_pair[:, 0], s=3.0)
-    plt.savefig("mem_one_strategy.png")
+    # s = [2*n for n in range(len(payoff_pair))]
+    plt.scatter(payoff_pair[:, 1], payoff_pair[:, 0], s=2.0, c='black')
+    plt.savefig("mem_one_strategy_qcc.png")
     plt.show()
 
 
