@@ -30,7 +30,7 @@ if __name__ == '__main__':
     p_payoff_set = np.array([3, 0, 5, 1])
     q_payoff_set = np.array([3, 5, 0, 1])
     p_strategy = [0.7881, 0.8888, 0.4686, 0.0792]
-    for i_0 in np.arange(0.0, 1.02, 0.01):
+    for i_0 in np.arange(0.0, 1.01, 0.01):
         for i_1 in np.arange(0.0, 1.01, 0.01):
             for i_2 in np.arange(0.0, 1.01, 0.01):
                 for i_3 in np.arange(0.0, 1.01, 0.01):
