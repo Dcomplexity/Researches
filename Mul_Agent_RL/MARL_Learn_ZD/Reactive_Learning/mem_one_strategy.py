@@ -45,6 +45,7 @@ if __name__ == '__main__':
     plt.xlim(left=0, right=5)
     plt.ylim(bottom=0, top=5)
     plt.plot(payoff_pair[:, 1], payoff_pair[:, 0], 'ro')
+    plt.savefig("mem_one_strategy.png")
     plt.show()
 
 
