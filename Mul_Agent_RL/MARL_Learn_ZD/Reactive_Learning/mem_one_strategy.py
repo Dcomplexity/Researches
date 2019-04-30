@@ -1,10 +1,52 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
-p = [0.7881, 0.8888, 0.4686, 0.0792]
-q = [0.5, 0.5, 0.5, 0.5]
-tm = [[0.0 for i in range(4)] for j in range(4)]
-state = []
-for i in range(2):
-    for j in range(2):
-        state.append([i,j])
-for i in state:
+def mem_one_strategpy(p, q, step_size):
+    tm = [[p[0] * q[0], p[0] * (1 - q[0]), (1 - p[0]) * q[0], (1 - p[0]) * (1 - q[0])],
+          [p[1] * q[2], p[1] * (1 - q[2]), (1 - p[1]) * q[2], (1 - p[1]) * (1 - q[2])],
+          [p[2] * q[1], p[2] * (1 - q[1]), (1 - p[2]) * q[1], (1 - p[2]) * (1 - q[1])],
+          [p[3] * q[3], p[3] * (1 - q[3]), (1 - p[3]) * q[3], (1 - p[3]) * (1 - q[3])]]
+    v = [0.25, 0.25, 0.25, 0.25]  # The steady state does not realize on the init state
+    steady_state = np.dot(v, np.linalg.matrix_power(tm, step_size))
+    return steady_state
+
+
+def cal_payoff(p_state, p_set):
+    return np.sum(p_state * p_set)
+
+
+if __name__ == '__main__':
+    # # p_strategy = [0.7881, 0.8888, 0.4686, 0.0792]
+    # p_strategy = [11.0 / 13.0, 1.0 / 2.0, 7.0 / 26.0, 0.0]
+    # # q_strategy = [0.5, 0.5, 0.5, 0.5]
+    # q_strategy = [1.0, 1.0, 1.0, 1.0]
+    # steady_state = mem_one_strategpy(p_strategy, q_strategy, 50)
+    # p_payoff_set = np.array([3, 0, 5, 1])
+    # q_payoff_set = np.array([3, 5, 0, 1])
+    # p_payoff = cal_payoff(steady_state, p_payoff_set)
+    # q_payoff = cal_payoff(steady_state, q_payoff_set)
+    payoff_pair = []
+    time = 0
+    p_payoff_set = np.array([3, 0, 5, 1])
+    q_payoff_set = np.array([3, 5, 0, 1])
+    p_strategy = [0.7881, 0.8888, 0.4686, 0.0792]
+    for i_0 in np.arange(0.0, 1.02, 0.01):
+        for i_1 in np.arange(0.0, 1.01, 0.01):
+            for i_2 in np.arange(0.0, 1.01, 0.01):
+                for i_3 in np.arange(0.0, 1.01, 0.01):
+                    print(time)
+                    time += 1
+                    q_strategy = [i_0, i_1, i_2, i_3]
+                    steady_state = mem_one_strategpy(p_strategy, q_strategy, 50)
+                    p_payoff = cal_payoff(steady_state, p_payoff_set)
+                    q_payoff = cal_payoff(steady_state, q_payoff_set)
+                    payoff_pair.append([p_payoff, q_payoff])
+    payoff_pair = np.array(payoff_pair)
+    plt.xlim(left=0, right=5)
+    plt.ylim(bottom=0, top=5)
+    plt.plot(payoff_pair[:, 1], payoff_pair[:, 0], 'ro')
+    plt.show()
+
+
+
+
