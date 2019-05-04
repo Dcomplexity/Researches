@@ -46,7 +46,3 @@ if __name__ == '__main__':
     plt.scatter(payoff_pair[:, 1], payoff_pair[:, 0], s=2.0, c='black')
     plt.savefig("./images/mem_one_strategy_qcc.png")
     plt.show()
-
-
-
-
