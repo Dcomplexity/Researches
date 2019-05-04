@@ -17,13 +17,3 @@ def pd_game(a_x, a_y, r, s, t, p):
         return p, p
     else:
         return "error"
-
-
-def reactive_learn(p, q, step):
-    for _ in range(step):
-        if _ == 0:
-            s_x = p[0]
-            s_y = q[0]
-            
-
-
