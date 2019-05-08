@@ -66,6 +66,6 @@ if __name__ == '__main__':
     payoff_pair = np.array(payoff_pair)
     plt.xlim(left = 0, right = 5)
     plt.ylim(bottom = 0, top = 5)
-    plt.scatter(payoff_pair[:, 1], payoff_pair[:, 0], s-2.0, c='green')
+    plt.scatter(payoff_pair[:, 1], payoff_pair[:, 0], s=2.0, c='green')
     plt.savefig('./images/reactive_learn_strategy.png')
     plt.show()
