@@ -59,10 +59,11 @@ if __name__ == '__main__':
     p_r = 1
     payoff_pair = []
     for _ in np.arange(10e5):
-        if _ / 10e3 == 0:
+        if _ % 10e3 == 0:
             print(_)
         s_q_r = np.random.beta(0.5, 0.5, 5)
         payoff_pair.append(reactive_learning(s_p_r, s_q_r, r_r, s_r, t_r, p_r))
+    # print(payoff_pair)
     payoff_pair = np.array(payoff_pair)
     plt.xlim(left = 0, right = 5)
     plt.ylim(bottom = 0, top = 5)
