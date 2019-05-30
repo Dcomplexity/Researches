@@ -28,7 +28,7 @@ class agent:
 def init_population(num):
     population = []
     for i in range(num):
-        population.append(agent(i, random.random()))
+        population.append(agent(i, i / 100))
     return population
 
 def run(num):
@@ -39,11 +39,25 @@ def run(num):
         i = np.random.choice(popu_id)
         popu_id.remove(i)
         j = np.random.choice(popu_id)
-        if abs(population[i].get_op() - population[j].get_op()) < 0.1:
+        avg_op = 0
+        for k in range(num):
+            avg_op += population[k].get_op()
+        avg_op = avg_op / num
+        print(avg_op)
+        if abs(population[i].get_op() - population[j].get_op()) < 1.0:
             population[i].backup()
             population[j].backup()
-            population[i].learn(population[j].get_old_op())
-            population[j].learn(population[i].get_old_op())
+            # population[i].learn(population[j].get_old_op())
+            # population[j].learn(population[i].get_old_op())
+            r_i = 1 - abs(0.0 - population[i].get_old_op())
+            r_j = 1 - abs(0.0 - population[j].get_old_op())
+            power_i = r_i / (r_i + r_j)
+            power_j = r_j / (r_i + r_j)
+            print(power_i, power_j)
+            new_i_op = population[i].get_old_op() * power_i + population[j].get_old_op() * power_j
+            new_j_op = population[i].get_old_op() * power_i + population[j].get_old_op() * power_j
+            population[i].set_op(new_i_op)
+            population[j].set_op(new_j_op)
     for i in population:
         print(i.get_op())
 
