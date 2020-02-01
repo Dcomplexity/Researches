@@ -140,7 +140,7 @@ if __name__ == "__main__":
         agent_1_0_strategy_t.append(strategy_pair[0][1])
     for strategy_pair in agent_0_strategy_trace:
         agent_0_1_strategy_t.append(strategy_pair[1][1])
-    for strategy_pair in agent_1_strategy_trace:
+    for strategy_pair in agent_1_wstrategy_trace:
         agent_1_1_strategy_t.append(strategy_pair[1][1])
     plt.figure(figsize=(12, 6))
     plt.subplot(121)
